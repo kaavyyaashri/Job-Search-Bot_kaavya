@@ -9,7 +9,7 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from datetime import datetime
 
-# ──────────────────────────────────────────────
+# ─────────────────────────────────────────────
 # YOUR PROFILE — Edit this section
 # ──────────────────────────────────────────────
 YOUR_PROFILE = """
