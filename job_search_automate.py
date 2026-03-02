@@ -467,9 +467,9 @@ from docx import Document
 
 # Map role categories to resume filenames in the /resumes folder
 RESUME_FILES = {
-    "product_engineer":         "resumes/product_engineer.docx",
-    "test_validation_engineer": "resumes/test_validation_engineer.docx",
-    "applied_ai_engineer":      "resumes/applied_ai_engineer.docx",
+    "product_engineer":         "resumes/01.Kaavya_Sri_Resume_2026.docx",
+    "test_validation_engineer": "resumes/01.Kaavya_Sri_Resume_2026_Test_Validation.docx",
+    "applied_ai_engineer":      "resumes/01.Kaavya_Sri_Resume_2026_AI_HPC.docx",
 }
 
 def load_resume(role_category):
@@ -697,65 +697,121 @@ If fewer than 5 jobs remain after filtering, keep ⚠️ VERIFY ones too.
 10. **Application Link**
 11. **Program Flag** — Graduate Program 🎓 / Rotational 🔄 / Standard Role (pick one)
 
-### STEP 4 — SORT results:
-- For USA: Sort by sponsorship likelihood first (✅ HIGH → ⚠️ VERIFY), then by match score
-- For other countries: Sort by match score descending
+### STEP 4 — PICK TOP 10 only
+After scoring and filtering, keep ONLY the top 10 highest scoring jobs for this country.
+If fewer than 10 pass the filters, include all that passed.
+Quality over quantity — do not pad with weak matches.
 
-### OUTPUT FORMAT:
-Return ONLY clean HTML — no markdown, no code fences, no preamble text.
-Use exactly this card template for each job:
+### STEP 5 — FIND HIRING CONTACT
+For each job, try to extract from the listing text:
+- Hiring manager name and email
+- Recruiter name and email
+- General HR/careers email (e.g. careers@company.com, jobs@company.com)
+If none found in the listing, write the most likely careers email based on company name
+e.g. for Siemens write "careers@siemens.com (inferred)" so candidate can verify.
 
-<div style="border:1px solid #e0e0e0; border-radius:10px; padding:20px; margin-bottom:24px; font-family:Arial,sans-serif; background:#ffffff;">
+### STEP 6 — BUILD TWO OUTPUTS
 
-  <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:8px;">
+#### OUTPUT A — Quick Snapshot Table (goes FIRST in email)
+A compact HTML table summarizing all matched jobs:
+
+<table style="width:100%; border-collapse:collapse; font-size:13px; margin-bottom:32px;">
+  <thead>
+    <tr style="background:#1a1a2e; color:white;">
+      <th style="padding:10px; text-align:left;">#</th>
+      <th style="padding:10px; text-align:left;">Job Title</th>
+      <th style="padding:10px; text-align:left;">Company</th>
+      <th style="padding:10px; text-align:left;">Role Type</th>
+      <th style="padding:10px; text-align:left;">Location</th>
+      <th style="padding:10px; text-align:left;">Score</th>
+      <th style="padding:10px; text-align:left;">Work Auth</th>
+      <th style="padding:10px; text-align:left;">Posted</th>
+      <th style="padding:10px; text-align:left;">Apply</th>
+    </tr>
+  </thead>
+  <tbody>
+    [one row per job — alternate row background #f9f9f9 and #ffffff]
+    [Score cell: color green if 75+, orange if 50-74, red if below 50]
+    [Posted cell: show 🔥 Fresh if posted within 24 hours]
+    [Apply cell: small "Apply →" hyperlink]
+  </tbody>
+</table>
+
+#### OUTPUT B — Detailed Job Cards (goes AFTER the table)
+One card per job using exactly this template:
+
+<div style="border:1px solid #e0e0e0; border-radius:10px; padding:20px; margin-bottom:28px; font-family:Arial,sans-serif; background:#ffffff;">
+
+  <!-- Header Row -->
+  <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:8px; margin-bottom:12px;">
     <div>
-      <h2 style="color:#1a1a2e; margin:0 0 4px 0; font-size:18px;">[Job Title]</h2>
-      <h3 style="color:#4a4a8a; margin:0; font-size:15px; font-weight:normal;">[Company Name] · [Sector Badge]</h3>
+      <h2 style="color:#1a1a2e; margin:0 0 4px 0; font-size:18px;">[Job Title] [🔥 if posted within 24h]</h2>
+      <h3 style="color:#4a4a8a; margin:0; font-size:14px; font-weight:normal;">[Company] · [Sector: Semiconductor / Automation / Startup / Tech]</h3>
     </div>
     <div style="text-align:right;">
-      <span style="background:#f0f0ff; color:#4a4a8a; padding:4px 10px; border-radius:20px; font-size:13px; font-weight:bold;">[Role Category]</span><br>
-      <span style="font-size:13px; color:#666; margin-top:4px; display:block;">[Program Flag if applicable]</span>
+      <span style="background:#f0f0ff; color:#4a4a8a; padding:4px 12px; border-radius:20px; font-size:13px; font-weight:bold;">[Role Category]</span>
+      <br>
+      <span style="font-size:12px; color:#999; margin-top:4px; display:block;">Posted: [date]</span>
     </div>
   </div>
 
-  <hr style="border:none; border-top:1px solid #f0f0f0; margin:12px 0;">
+  <hr style="border:none; border-top:1px solid #f0f0f0; margin:0 0 14px 0;">
 
-  <table style="width:100%; font-size:14px; border-collapse:collapse;">
-    <tr>
-      <td style="padding:4px 8px 4px 0; color:#888; width:160px;">📍 Location</td>
-      <td style="padding:4px 0;">[Location]</td>
+  <!-- Match Score Banner -->
+  <div style="background:#f8f8ff; border-left:4px solid #4a4a8a; padding:10px 14px; border-radius:0 6px 6px 0; margin-bottom:16px;">
+    <strong style="font-size:15px; color:#1a1a2e;">Match Score: [X]/100</strong>
+    <p style="margin:4px 0 0 0; font-size:13px; color:#555;">[2 sentence breakdown — why this score: role fit + resume fit + company type + location]</p>
+  </div>
+
+  <!-- Job Details Table -->
+  <table style="width:100%; font-size:14px; border-collapse:collapse; margin-bottom:16px;">
+    <tr style="border-bottom:1px solid #f5f5f5;">
+      <td style="padding:8px 12px 8px 0; color:#888; width:170px; vertical-align:top;">📍 Location</td>
+      <td style="padding:8px 0; vertical-align:top;">[Location — Remote / City]</td>
+    </tr>
+    <tr style="border-bottom:1px solid #f5f5f5;">
+      <td style="padding:8px 12px 8px 0; color:#888; vertical-align:top;">🏢 Team / Dept</td>
+      <td style="padding:8px 0; vertical-align:top;">[Team or Department name — e.g. "Platform Engineering", "Semiconductor Test Div."]</td>
+    </tr>
+    <tr style="border-bottom:1px solid #f5f5f5;">
+      <td style="padding:8px 12px 8px 0; color:#888; vertical-align:top;">📋 Key Requirements</td>
+      <td style="padding:8px 0; vertical-align:top;">[req1] · [req2] · [req3] · [req4]</td>
+    </tr>
+    <tr style="border-bottom:1px solid #f5f5f5;">
+      <td style="padding:8px 12px 8px 0; color:#888; vertical-align:top;">📄 JD Summary</td>
+      <td style="padding:8px 0; vertical-align:top;">[3-4 sentence summary of the full job description — what the role does day to day, what team you join, what you build or test]</td>
+    </tr>
+    <tr style="border-bottom:1px solid #f5f5f5;">
+      <td style="padding:8px 12px 8px 0; color:#888; vertical-align:top;">💼 Resume Fit</td>
+      <td style="padding:8px 0; vertical-align:top;">[2 sentences — specifically how candidate's resume matches this JD. Mention actual skills/projects from resume that align]</td>
+    </tr>
+    <tr style="border-bottom:1px solid #f5f5f5;">
+      <td style="padding:8px 12px 8px 0; color:#888; vertical-align:top;">🏭 About the Company</td>
+      <td style="padding:8px 0; vertical-align:top;">[4-5 sentences: what the company does, their main products, company size, notable achievements, why it is a good company for new grads in this field]</td>
+    </tr>
+    <tr style="border-bottom:1px solid #f5f5f5;">
+      <td style="padding:8px 12px 8px 0; color:#888; vertical-align:top;">👥 Hiring Team</td>
+      <td style="padding:8px 0; vertical-align:top;">[Team description — what this team works on, their mission, tech stack if mentioned]</td>
+    </tr>
+    <tr style="border-bottom:1px solid #f5f5f5;">
+      <td style="padding:8px 12px 8px 0; color:#888; vertical-align:top;">✉️ Hiring Contact</td>
+      <td style="padding:8px 0; vertical-align:top;">[Name + email if found in listing] OR [inferred careers email — clearly marked as "inferred, verify before sending"]</td>
     </tr>
     <tr>
-      <td style="padding:4px 8px 4px 0; color:#888;">🏢 Team / Dept</td>
-      <td style="padding:4px 0;">[Team or Department]</td>
-    </tr>
-    <tr>
-      <td style="padding:4px 8px 4px 0; color:#888;">📋 Top Requirements</td>
-      <td style="padding:4px 0;">[req1] · [req2] · [req3]</td>
-    </tr>
-    <tr>
-      <td style="padding:4px 8px 4px 0; color:#888;">🎯 Match Score</td>
-      <td style="padding:4px 0;"><strong>[Score]/100</strong> — [1 sentence reason]</td>
-    </tr>
-    <tr>
-      <td style="padding:4px 8px 4px 0; color:#888;">📄 Resume Fit</td>
-      <td style="padding:4px 0;">[1 sentence]</td>
-    </tr>
-    <tr>
-      <td style="padding:4px 8px 4px 0; color:#888;">🏭 Company</td>
-      <td style="padding:4px 0;">[2-3 sentence overview]</td>
-    </tr>
-    <tr>
-      <td style="padding:4px 8px 4px 0; color:#888;">🛂 Work Auth</td>
-      <td style="padding:4px 0;">[Sponsorship badge + note]</td>
-    </tr>
-    <tr>
-      <td style="padding:4px 8px 4px 0; color:#888;">✉️ Contact</td>
-      <td style="padding:4px 0;">[Email or "Not listed"]</td>
+      <td style="padding:8px 12px 8px 0; color:#888; vertical-align:top;">🛂 Work Auth</td>
+      <td style="padding:8px 0; vertical-align:top;">[Sponsorship badge + plain English note e.g. "✅ HIGH — explicitly mentions visa sponsorship" or "⚠️ VERIFY — no mention found, OPT likely accepted"]</td>
     </tr>
   </table>
 
-  <a href="[link]" style="display:inline-block; margin-top:14px; background:#4a4a8a; color:white; padding:9px 20px; border-radius:6px; text-decoration:none; font-size:14px;">Apply Now →</a>
+  <!-- Program Flag if applicable -->
+  [IF graduate or rotational program add this block:]
+  <div style="background:#fff8e1; border:1px solid #ffc107; border-radius:6px; padding:10px 14px; margin-bottom:14px; font-size:13px;">
+    🎓 <strong>Graduate / Rotational Program</strong> — [1 sentence describing the program structure e.g. "3 rotation, 18 month program across hardware, software and product teams"]
+  </div>
+
+  <!-- Apply Button -->
+  <a href="[application link]" style="display:inline-block; background:#1a1a2e; color:white; padding:10px 22px; border-radius:6px; text-decoration:none; font-size:14px; margin-right:10px;">Apply Now →</a>
+  <a href="[company careers page if known]" style="display:inline-block; background:#f0f0ff; color:#4a4a8a; padding:10px 22px; border-radius:6px; text-decoration:none; font-size:14px;">Company Careers Page →</a>
 
 </div>
 
@@ -854,43 +910,90 @@ def analyze_jobs_with_claude(all_jobs):
     return "\n".join(all_html_sections)
 
 # ──────────────────────────────────────────────
-# STEP 3: Send the email digest to yourself
+# STEP 3: Send the email digest
 # ──────────────────────────────────────────────
+
 def send_email(html_content):
-    sender_email = os.environ["EMAIL_ADDRESS"]
+    sender_email    = os.environ["EMAIL_ADDRESS"]
     sender_password = os.environ["EMAIL_APP_PASSWORD"]
     recipient_email = os.environ["EMAIL_TO"]
 
     today = datetime.now().strftime("%B %d, %Y")
+    run_time = datetime.now().strftime("%Y-%m-%d %H:%M UTC")
 
     msg = MIMEMultipart("alternative")
-    msg["Subject"] = f"🚀 Product Engineer Jobs — OPT/H1B Friendly | {today}"
-    msg["From"] = sender_email
-    msg["To"] = recipient_email
+    msg["Subject"] = f"🚀 Engineering Job Digest — Top 10 Per Region | {today}"
+    msg["From"]    = sender_email
+    msg["To"]      = recipient_email
 
-    # Plain text fallback
-    plain_text = "Your daily product engineer job digest is ready. Please view in an HTML-compatible email client."
+    plain_text = (
+        "Your daily engineering job digest is ready. "
+        "Please open in an HTML email client to view formatted results."
+    )
 
-    # Full HTML email with header and footer
     full_html = f"""
     <html>
-    <body style="font-family:Arial,sans-serif; max-width:700px; margin:auto; padding:20px; background:#f9f9f9;">
+    <body style="font-family:Arial,sans-serif; max-width:760px; margin:auto; padding:20px; background:#f4f4f8;">
 
-      <div style="background:linear-gradient(135deg,#1a1a2e,#4a4a8a); color:white; padding:24px; border-radius:10px; margin-bottom:24px;">
-        <h1 style="margin:0; font-size:22px;">🚀 Daily Job Digest</h1>
-        <p style="margin:8px 0 0 0; opacity:0.85;">Product Engineer Roles — OPT/H1B Friendly | {today}</p>
+      <!-- ── EMAIL HEADER ── -->
+      <div style="background:linear-gradient(135deg,#1a1a2e,#4a4a8a);
+                  color:white; padding:28px 24px; border-radius:12px; margin-bottom:24px;">
+        <h1 style="margin:0 0 6px 0; font-size:22px;">🚀 Daily Engineering Job Digest</h1>
+        <p style="margin:0; opacity:0.8; font-size:14px;">
+          Product Engineer · Test &amp; Validation · Applied AI
+          &nbsp;|&nbsp; OPT/STEM OPT Friendly &nbsp;|&nbsp; {today}
+        </p>
       </div>
 
-      <div style="background:#fff3cd; border:1px solid #ffc107; border-radius:8px; padding:12px; margin-bottom:24px;">
-        <strong>⚠️ OPT Tip:</strong> Always verify sponsorship directly with the recruiter.
-        Check <a href="https://www.myvisajobs.com">myvisajobs.com</a> to confirm a company's H1B history before applying.
+      <!-- ── HOW TO READ THIS EMAIL ── -->
+      <div style="background:#e8f4fd; border:1px solid #90caf9; border-radius:8px;
+                  padding:14px 18px; margin-bottom:24px; font-size:13px; color:#1a1a2e;">
+        <strong>📖 How to use this digest:</strong><br>
+        1. Scan the <strong>Quick Snapshot Table</strong> at the top of each country section<br>
+        2. Click into cards with <strong>score 75+</strong> first — those are your best matches<br>
+        3. Jobs marked <strong>🔥 Fresh</strong> were posted in the last 24 hours — apply same day<br>
+        4. Check <strong>Work Auth</strong> row before applying — ✅ HIGH = confirmed friendly, ⚠️ VERIFY = confirm with recruiter<br>
+        5. Use the <strong>Hiring Contact</strong> email to reach out directly after applying
       </div>
 
+      <!-- ── OPT REMINDER ── -->
+      <div style="background:#fff8e1; border:1px solid #ffc107; border-radius:8px;
+                  padding:12px 18px; margin-bottom:28px; font-size:13px;">
+        <strong>⚠️ OPT Reminder:</strong>
+        Always verify work authorization directly with the recruiter.
+        "No sponsorship" often means no H1B transfer — OPT workers are frequently still accepted.
+        Check company H1B history at
+        <a href="https://www.myvisajobs.com" style="color:#4a4a8a;">myvisajobs.com</a>
+        before applying.
+      </div>
+
+      <!-- ── MAIN CONTENT (Claude's output per country) ── -->
       {html_content}
 
-      <div style="text-align:center; color:#999; font-size:12px; margin-top:32px; padding-top:16px; border-top:1px solid #eee;">
-        <p>This digest was generated automatically using Claude AI + GitHub Actions.<br>
-        Ran on: {datetime.now().strftime("%Y-%m-%d %H:%M UTC")}</p>
+      <!-- ── APPLICATION CHECKLIST FOOTER ── -->
+      <div style="background:#1a1a2e; color:white; border-radius:10px;
+                  padding:20px 24px; margin-top:32px;">
+        <h3 style="margin:0 0 8px 0; font-size:16px;">✅ Application Checklist</h3>
+        <p style="margin:0 0 12px 0; font-size:13px; opacity:0.8;">
+          Before applying to any role, make sure you have:
+        </p>
+        <ul style="margin:0; padding-left:20px; font-size:13px; opacity:0.9; line-height:1.9;">
+          <li>Tailored your resume to match the specific role (Product / Test / Applied AI)</li>
+          <li>Verified the work authorization requirement with the recruiter</li>
+          <li>Checked the company's H1B sponsorship history on myvisajobs.com</li>
+          <li>Written a short outreach email to the hiring contact if email was found</li>
+          <li>Noted your OPT end date and STEM OPT eligibility in your cover note if asked</li>
+        </ul>
+      </div>
+
+      <!-- ── EMAIL FOOTER ── -->
+      <div style="text-align:center; color:#aaa; font-size:12px;
+                  margin-top:24px; padding-top:16px; border-top:1px solid #ddd;">
+        <p style="margin:0;">
+          Generated automatically using Claude AI + GitHub Actions<br>
+          Run time: {run_time} &nbsp;·&nbsp;
+          Regions: USA 🇺🇸 · India 🇮🇳 · Singapore 🇸🇬 · Ireland 🇮🇪
+        </p>
       </div>
 
     </body>
@@ -908,26 +1011,377 @@ def send_email(html_content):
     except Exception as e:
         print(f"❌ Failed to send email: {e}")
         raise
+# ```
+
+# ---
+
+# ## What the Email Looks Like End to End
+# ```
+# 📧 Subject: 🚀 Engineering Job Digest — Top 10 Per Region | March 1, 2025
+# ─────────────────────────────────────────────────
+#   HEADER BANNER — Role types + date
+
+#   HOW TO READ THIS — quick guide
+
+#   OPT REMINDER — myvisajobs.com tip
+
+#   ── 🇺🇸 United States ──────────────────────────
+#     QUICK SNAPSHOT TABLE (all 10 in one view)
+#     #  Title  Company  Role  Location  Score  Auth  Posted  Apply
+
+#     DETAILED CARD × 10
+#     each card has:
+#       Match Score Banner (score + reason)
+#       JD Summary
+#       Resume Fit
+#       Company Deep Dive (4-5 sentences)
+#       Hiring Team description
+#       Hiring Contact email
+#       Work Auth badge
+#       Apply Now + Careers Page buttons
+
+#   ── 🇮🇳 India ──────────────────────────────────
+#     [same structure × 10]
+
+#   ── 🇸🇬 Singapore ──────────────────────────────
+#     [same structure × 10]
+
+#   ── 🇮🇪 Ireland ────────────────────────────────
+#     [same structure × 10]
+
+#   APPLICATION CHECKLIST FOOTER
+# ─────────────────────────────────────────────────
+
+# ──────────────────────────────────────────────
+# MAIN — Ties the full pipeline together
+# ──────────────────────────────────────────────
+
+import sys
+
+def run_pipeline():
+    """
+    Full job search pipeline:
+    1. Load resumes
+    2. Fetch jobs from all sources + countries
+    3. Analyze + filter + score with Claude
+    4. Send email digest
+    5. Log summary report
+    """
+
+    start_time = datetime.now()
+
+    print("\n" + "="*60)
+    print("  🚀 Engineering Job Search Bot")
+    print(f"  📅 {start_time.strftime('%A, %B %d, %Y — %H:%M UTC')}")
+    print("="*60)
+
+    # ── Active countries summary ──────────────────────────────
+    active = [c.upper() for c, v in ACTIVE_COUNTRIES.items() if v]
+    inactive = [c.upper() for c, v in ACTIVE_COUNTRIES.items() if not v]
+    print(f"\n🌍 Active regions   : {', '.join(active) if active else 'None'}")
+    print(f"💤 Skipped regions  : {', '.join(inactive) if inactive else 'None'}")
+
+    # ── Resume check ─────────────────────────────────────────
+    print("\n📄 Resume status:")
+    resumes_ok = True
+    for role, text in LOADED_RESUMES.items():
+        status = "✅" if "missing" not in text.lower() and "error" not in text.lower() else "❌"
+        print(f"  {status} {role.replace('_', ' ').title()}")
+        if status == "❌":
+            resumes_ok = False
+
+    if not resumes_ok:
+        print("\n  ⚠️  One or more resume files missing.")
+        print("  Script will continue but match scoring may be less accurate.")
+        print("  Add .docx files to /resumes folder and push to repo.\n")
+
+    # ── Check required environment variables ─────────────────
+    print("\n🔐 Checking environment secrets...")
+    required_secrets = [
+        "ANTHROPIC_API_KEY",
+        "EMAIL_ADDRESS",
+        "EMAIL_APP_PASSWORD",
+        "EMAIL_TO",
+    ]
+    missing_secrets = []
+    for secret in required_secrets:
+        if not os.environ.get(secret):
+            missing_secrets.append(secret)
+            print(f"  ❌ Missing: {secret}")
+        else:
+            print(f"  ✅ Found  : {secret}")
+
+    if missing_secrets:
+        print(f"\n❌ FATAL: Missing required secrets: {', '.join(missing_secrets)}")
+        print("   Go to GitHub → Settings → Secrets and Variables → Actions")
+        print("   Add the missing secrets and re-run.\n")
+        sys.exit(1)
+
+    # ─────────────────────────────────────────────────────────
+    # STEP 1 — Fetch all jobs
+    # ─────────────────────────────────────────────────────────
+    print("\n" + "-"*60)
+    print("STEP 1 — Fetching jobs from all sources")
+    print("-"*60)
+
+    try:
+        all_jobs = fetch_all_jobs()
+    except Exception as e:
+        print(f"\n❌ Fatal error during job fetching: {e}")
+        send_error_email("Job Fetching Failed", str(e))
+        sys.exit(1)
+
+    if not all_jobs:
+        print("\n⚠️  No jobs fetched from any source.")
+        send_error_email(
+            "No Jobs Found",
+            "The job search bot ran but found no listings from any source. "
+            "Indeed or other feeds may be temporarily unavailable."
+        )
+        sys.exit(0)
+
+    # ── Per-country breakdown ─────────────────────────────────
+    print("\n📊 Jobs fetched per region:")
+    country_counts = {}
+    for job in all_jobs:
+        ctx = detect_country_context(job.get("location", ""))
+        country_counts[ctx] = country_counts.get(ctx, 0) + 1
+    for country, count in country_counts.items():
+        print(f"  🌍 {country.upper():<12} → {count} jobs")
+    print(f"  {'TOTAL':<14} → {len(all_jobs)} jobs")
+
+    # ─────────────────────────────────────────────────────────
+    # STEP 2 — Analyze + filter + score with Claude
+    # ─────────────────────────────────────────────────────────
+    print("\n" + "-"*60)
+    print("STEP 2 — Analyzing jobs with Claude AI")
+    print("-"*60)
+
+    try:
+        analysis_html = analyze_jobs_with_claude(all_jobs)
+    except Exception as e:
+        print(f"\n❌ Fatal error during Claude analysis: {e}")
+        send_error_email("Claude Analysis Failed", str(e))
+        sys.exit(1)
+
+    # Check if Claude returned empty / no matches
+    if not analysis_html or "No matching jobs found" in analysis_html:
+        print("\n⚠️  Claude found no matching jobs after filtering.")
+        send_no_matches_email()
+        sys.exit(0)
+
+    # ─────────────────────────────────────────────────────────
+    # STEP 3 — Send email digest
+    # ─────────────────────────────────────────────────────────
+    print("\n" + "-"*60)
+    print("STEP 3 — Sending email digest")
+    print("-"*60)
+
+    try:
+        send_email(analysis_html)
+    except Exception as e:
+        print(f"\n❌ Fatal error sending email: {e}")
+        sys.exit(1)
+
+    # ─────────────────────────────────────────────────────────
+    # DONE — Final summary log
+    # ─────────────────────────────────────────────────────────
+    end_time   = datetime.now()
+    total_time = (end_time - start_time).seconds
+
+    print("\n" + "="*60)
+    print("  ✅ Pipeline Complete!")
+    print("="*60)
+    print(f"  📬 Email sent to   : {os.environ.get('EMAIL_TO')}")
+    print(f"  📦 Jobs fetched    : {len(all_jobs)}")
+    print(f"  🌍 Regions covered : {', '.join(active)}")
+    print(f"  ⏱️  Total runtime   : {total_time}s")
+    print(f"  🕐 Finished at     : {end_time.strftime('%H:%M:%S UTC')}")
+    print("="*60 + "\n")
 
 
 # ──────────────────────────────────────────────
-# MAIN — runs the full pipeline
+# ERROR EMAIL HELPERS
+# Helper emails so you always know if something breaks
 # ──────────────────────────────────────────────
+
+def send_error_email(error_type, error_detail):
+    """
+    Sends a plain alert email if any step of the pipeline fails.
+    So you know the bot broke rather than just getting no email silently.
+    """
+    try:
+        sender_email    = os.environ.get("EMAIL_ADDRESS", "")
+        sender_password = os.environ.get("EMAIL_APP_PASSWORD", "")
+        recipient_email = os.environ.get("EMAIL_TO", "")
+
+        if not all([sender_email, sender_password, recipient_email]):
+            print("⚠️  Cannot send error email — email secrets not set")
+            return
+
+        msg = MIMEMultipart("alternative")
+        msg["Subject"] = f"⚠️ Job Bot Error: {error_type}"
+        msg["From"]    = sender_email
+        msg["To"]      = recipient_email
+
+        html = f"""
+        <html>
+        <body style="font-family:Arial,sans-serif; max-width:600px; margin:auto; padding:20px;">
+          <div style="background:#ff4444; color:white; padding:20px; border-radius:10px; margin-bottom:20px;">
+            <h2 style="margin:0;">⚠️ Job Search Bot Error</h2>
+            <p style="margin:8px 0 0 0; opacity:0.9;">{error_type}</p>
+          </div>
+          <div style="background:#fff3f3; border:1px solid #ffcccc; border-radius:8px; padding:16px;">
+            <p><strong>Error Detail:</strong></p>
+            <pre style="background:#f9f9f9; padding:12px; border-radius:6px; font-size:13px; white-space:pre-wrap;">{error_detail}</pre>
+          </div>
+          <div style="margin-top:20px; font-size:13px; color:#666;">
+            <p>To debug:</p>
+            <ol>
+              <li>Go to your GitHub repo → <strong>Actions</strong> tab</li>
+              <li>Click the failed workflow run</li>
+              <li>Expand the <strong>Run job search bot</strong> step for full logs</li>
+            </ol>
+          </div>
+        </body>
+        </html>
+        """
+
+        msg.attach(MIMEText(html, "html"))
+
+        with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
+            server.login(sender_email, sender_password)
+            server.sendmail(sender_email, recipient_email, msg.as_string())
+
+        print(f"⚠️  Error notification sent to {recipient_email}")
+
+    except Exception as e:
+        print(f"❌ Could not send error email either: {e}")
+
+
+def send_no_matches_email():
+    """
+    Sends a short email when bot ran fine but found zero matching jobs today.
+    So silence = actual silence, not a broken bot.
+    """
+    try:
+        sender_email    = os.environ.get("EMAIL_ADDRESS", "")
+        sender_password = os.environ.get("EMAIL_APP_PASSWORD", "")
+        recipient_email = os.environ.get("EMAIL_TO", "")
+
+        today = datetime.now().strftime("%B %d, %Y")
+
+        msg = MIMEMultipart("alternative")
+        msg["Subject"] = f"📭 Job Bot — No New Matches Today | {today}"
+        msg["From"]    = sender_email
+        msg["To"]      = recipient_email
+
+        html = f"""
+        <html>
+        <body style="font-family:Arial,sans-serif; max-width:600px; margin:auto; padding:20px;">
+          <div style="background:#f0f0ff; border:1px solid #c0c0ff;
+                      border-radius:10px; padding:24px; text-align:center;">
+            <h2 style="color:#4a4a8a; margin:0 0 8px 0;">📭 No New Matches Today</h2>
+            <p style="color:#666; margin:0;">{today}</p>
+          </div>
+          <div style="margin-top:20px; font-size:14px; color:#444; line-height:1.7;">
+            <p>The bot ran successfully across all active regions but found
+            no new listings that passed the filters today.</p>
+            <p>This is normal — some days are quiet. The bot will run again
+            on the next scheduled cycle.</p>
+            <p style="margin-top:16px;"><strong>Active regions checked:</strong><br>
+            🇺🇸 USA &nbsp;·&nbsp; 🇮🇳 India &nbsp;·&nbsp;
+            🇸🇬 Singapore &nbsp;·&nbsp; 🇮🇪 Ireland</p>
+          </div>
+        </body>
+        </html>
+        """
+
+        msg.attach(MIMEText(html, "html"))
+
+        with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
+            server.login(sender_email, sender_password)
+            server.sendmail(sender_email, recipient_email, msg.as_string())
+
+        print(f"📭 No-matches notification sent to {recipient_email}")
+
+    except Exception as e:
+        print(f"❌ Could not send no-matches email: {e}")
+
+
+# ──────────────────────────────────────────────
+# ENTRY POINT
+# ──────────────────────────────────────────────
+
 if __name__ == "__main__":
-    print(f"\n{'='*50}")
-    print(f"  Job Search Bot Starting — {datetime.now().strftime('%Y-%m-%d %H:%M')}")
-    print(f"{'='*50}\n")
+    run_pipeline()
 
-    # 1. Fetch jobs
-    jobs = fetch_jobs_from_indeed()
 
-    # 2. Analyze with Claude
-    analysis_html = analyze_jobs_with_claude(jobs)
+# ```
 
-    # 3. Email results
-    send_email(analysis_html)
+# ---
 
-    print("\n✅ Job search pipeline complete!\n")
+# ## What This Main Section Does
+# ```
+# run_pipeline() kicks off in this exact order:
+
+#   ✅ Print active regions + skipped regions
+#   ✅ Check all 3 resume files loaded correctly
+#   ✅ Verify all 4 GitHub secrets exist — EXIT with clear message if any missing
+#          ↓
+#   STEP 1 — fetch_all_jobs()
+#     → If zero jobs fetched → sends ⚠️ error email → exits cleanly
+#          ↓
+#   STEP 2 — analyze_jobs_with_claude()
+#     → If Claude returns no matches → sends 📭 no-matches email → exits cleanly
+#          ↓
+#   STEP 3 — send_email()
+#     → Sends full digest email
+#          ↓
+#   ✅ Final summary printed to GitHub Actions log
+# ```
+
+# ---
+
+# ## The 3 Email States You'll Receive
+
+# | Situation | Email you get |
+# |---|---|
+# | Bot works + matches found | 🚀 Full digest with job cards |
+# | Bot works + zero matches today | 📭 Short "nothing today" note |
+# | Bot crashes at any step | ⚠️ Error email with debug instructions |
+
+# This means **silence from the bot will never happen** — you'll always get one of these three emails every run so you always know what happened.
+
+# ---
+
+# ## Your Complete File Structure Right Now
+# ```
+# your-repo/
+# ├── job_search.py                     ← complete script
+# ├── resumes/
+# │   ├── product_engineer.docx
+# │   ├── test_validation_engineer.docx
+# │   └── applied_ai_engineer.docx
+# └── .github/
+#     └── workflows/
+#         └── job_search.yml
+# ```
+
+# ---
+
+# ## Final Checklist Before First Run
+# ```
+# □ All code sections added to job_search.py in order
+# □ RESUME_FILES paths match your actual filenames in /resumes
+# □ YOUR_PROFILE filled in with your actual degree + university
+# □ ACTIVE_COUNTRIES set correctly (all True to start)
+# □ 4 GitHub secrets added (ANTHROPIC_API_KEY, EMAIL_ADDRESS,
+#   EMAIL_APP_PASSWORD, EMAIL_TO)
+# □ Gmail App Password generated and saved as secret
+# □ Push everything to GitHub
+# □ Go to Actions tab → Run workflow manually to test
+# □ Check your inbox within 2 minutes
 
 
 
