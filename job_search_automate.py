@@ -1,4 +1,4 @@
-# Job Search automate code with the help of Claude
+# Job Search automate code with the help of Gemini AI
 
 import google.generativeai as genai
 import smtplib
@@ -475,10 +475,10 @@ def fetch_all_jobs():
     return unique_jobs
 
 # ──────────────────────────────────────────────
-# STEP 2: Filter and enrich jobs using Claude
+# STEP 2: Filter and enrich jobs using Gemini AI
 # ──────────────────────────────────────────────
 
-# Resume summaries for each role — Claude uses these to score match
+# Resume summaries for each role — Gemini uses these to score match
 # Paste a short summary of each resume here (3-5 bullet points each)
 # ──────────────────────────────────────────────
 # RESUME LOADER — reads actual .docx files
@@ -523,7 +523,7 @@ def load_resume(role_category):
 
         extracted = "\n".join(full_text)
 
-        # Trim to ~2000 chars to stay within Claude token limits
+        # Trim to ~2000 chars to stay within Gemini token limits
         # Keeps the most important top section of your resume
         if len(extracted) > 2000:
             extracted = extracted[:2000] + "\n... [resume trimmed for brevity]"
@@ -570,7 +570,7 @@ def detect_role_category(job_title, job_description):
 
 
 def detect_country_context(location_str):
-    """Return country context so Claude applies the right visa filters"""
+    """Return country context so Gemini applies the right visa filters"""
     loc = location_str.lower()
     if any(x in loc for x in ["india", "hyderabad", "bangalore", "bengaluru"]):
         return "india"
@@ -584,7 +584,7 @@ def detect_country_context(location_str):
 
 def build_claude_prompt(jobs_batch, country_context):
     """
-    Build the filtering + enrichment prompt for Claude.
+    Build the filtering + enrichment prompt for gemini.
     Different visa/authorization instructions per country.
     """
 
@@ -610,7 +610,7 @@ This means:
 ### FLAG as ⚠️ VERIFY (do NOT auto-skip — candidate decides):
 - "No sponsorship available" or "We do not sponsor visas"
   → Reason: This often means no H1B TRANSFER, not necessarily blocking OPT workers
-  → Claude should note: "Says no sponsorship — may still accept OPT. Verify directly."
+  → Gemini should note: "Says no sponsorship — may still accept OPT. Verify directly."
 
 ### SPONSORSHIP LIKELIHOOD BADGE (for USA jobs only):
 - ✅ HIGH — Company explicitly says "visa sponsorship available" OR is on known H1B sponsor list
@@ -848,7 +848,7 @@ If zero jobs match after filtering, return:
 def analyze_jobs_with_claude(all_jobs):
     """
     Splits jobs into batches by country context,
-    sends each batch to Claude with the right filters,
+    sends each batch to Gemini with the right filters,
     combines results into one email.
     """
     if not all_jobs:
@@ -856,16 +856,17 @@ def analyze_jobs_with_claude(all_jobs):
         return "<p style='color:#888;'>No new job listings found today.</p>"
 
     genai.configure(api_key=os.environ["GEMINI_API_KEY"])
-    # --- DIAGNOSTIC: Print available models ---
-    print("\n🔍 Checking available Gemini models for your API key:")
-    try:
-        for m in genai.list_models():
-            if 'generateContent' in m.supported_generation_methods:
-                print(f"  ⭐ {m.name}")
-    except Exception as e:
-        print(f"  ❌ Could not list models: {e}")
+    # # --- DIAGNOSTIC: Print available models ---
+    # print("\n🔍 Checking available Gemini models for your API key:")
+    # try:
+    #     for m in genai.list_models():
+    #         if 'generateContent' in m.supported_generation_methods:
+    #             print(f"  ⭐ {m.name}")
+    # except Exception as e:
+    #     print(f"  ❌ Could not list models: {e}")
     # ------------------------------------------
-    model = genai.GenerativeModel("gemini-1.5-flash-latest")
+    # Update this line
+    model = genai.GenerativeModel("gemini-2.0-flash")
 
 
     # ── Group jobs by country context ──
@@ -910,7 +911,7 @@ def analyze_jobs_with_claude(all_jobs):
                 time.sleep(2)  # Gemini free tier — slightly longer pause
 
             except Exception as e:
-                print(f"  ❌ Claude error on batch {batch_num}: {e}")
+                print(f"  ❌ Gemini error on batch {batch_num}: {e}")
                 country_html_parts.append(
                     f"<p style='color:red;'>Error analyzing batch {batch_num}: {e}</p>"
                 )
@@ -931,7 +932,7 @@ def analyze_jobs_with_claude(all_jobs):
     if not all_html_sections:
         return "<p style='color:#888;'>No matching jobs found across any region today.</p>"
 
-    print("\n✅ All Claude analysis complete")
+    print("\n✅ All Gemini analysis complete")
     return "\n".join(all_html_sections)
 
 # ──────────────────────────────────────────────
@@ -992,7 +993,7 @@ def send_email(html_content):
         before applying.
       </div>
 
-      <!-- ── MAIN CONTENT (Claude's output per country) ── -->
+      <!-- ── MAIN CONTENT (Gemini's output per country) ── -->
       {html_content}
 
       <!-- ── APPLICATION CHECKLIST FOOTER ── -->
@@ -1086,7 +1087,7 @@ def run_pipeline():
     Full job search pipeline:
     1. Load resumes
     2. Fetch jobs from all sources + countries
-    3. Analyze + filter + score with Claude
+    3. Analyze + filter + score with Gemini
     4. Send email digest
     5. Log summary report
     """
@@ -1174,7 +1175,7 @@ def run_pipeline():
     print(f"  {'TOTAL':<14} → {len(all_jobs)} jobs")
 
     # ─────────────────────────────────────────────────────────
-    # STEP 2 — Analyze + filter + score with Claude
+    # STEP 2 — Analyze + filter + score with Gemini
     # ─────────────────────────────────────────────────────────
     print("\n" + "-"*60)
     print("STEP 2 — Analyzing jobs with Gemini AI")
@@ -1183,13 +1184,13 @@ def run_pipeline():
     try:
         analysis_html = analyze_jobs_with_claude(all_jobs)
     except Exception as e:
-        print(f"\n❌ Fatal error during Claude analysis: {e}")
-        send_error_email("Claude Analysis Failed", str(e))
+        print(f"\n❌ Fatal error during Gemini analysis: {e}")
+        send_error_email("Gemini Analysis Failed", str(e))
         sys.exit(1)
 
-    # Check if Claude returned empty / no matches
+    # Check if Gemini returned empty / no matches
     if not analysis_html or "No matching jobs found" in analysis_html:
-        print("\n⚠️  Claude found no matching jobs after filtering.")
+        print("\n⚠️  Gemini found no matching jobs after filtering.")
         send_no_matches_email()
         sys.exit(0)
 
