@@ -844,6 +844,33 @@ If zero jobs match after filtering, return:
 """
     return prompt
 
+def prefilter_jobs(jobs, top_n=20):
+    """
+    Locally score and keep only the most relevant jobs before calling Gemini.
+    Runs with zero API calls — dramatically reduces quota usage.
+    """
+    priority_keywords = [
+        "new grad", "entry level", "graduate", "rotational",
+        "product engineer", "test engineer", "validation engineer",
+        "applied ai", "machine learning", "semiconductor", "embedded",
+        "nvidia", "amd", "qualcomm", "texas instruments", "applied materials",
+        "lam research", "kla", "siemens", "honeywell", "rockwell",
+        "automation", "hardware", "firmware", "fpga", "pcb",
+    ]
+    skip_keywords = [
+        "senior", "staff", "principal", "director", "manager",
+        "10+ years", "8+ years", "7+ years", "5+ years",
+        "us citizen only", "clearance required",
+    ]
+    scored = []
+    for job in jobs:
+        combined = (job.get("title","") + " " + job.get("description","") + " " + job.get("company","")).lower()
+        if any(kw in combined for kw in skip_keywords):
+            continue
+        score = sum(1 for kw in priority_keywords if kw in combined)
+        scored.append((score, job))
+    scored.sort(key=lambda x: x[0], reverse=True)
+    return [job for _, job in scored[:top_n]]
 
 def analyze_jobs_with_claude(all_jobs):
     """
@@ -866,7 +893,7 @@ def analyze_jobs_with_claude(all_jobs):
     #     print(f"  ❌ Could not list models: {e}")
     # ------------------------------------------
     # Update this line
-    model = genai.GenerativeModel("gemini-2.0-flash")
+    model = genai.GenerativeModel("gemini-2.0-flash-lite")
 
 
     # ── Group jobs by country context ──
@@ -892,10 +919,16 @@ def analyze_jobs_with_claude(all_jobs):
         if not ACTIVE_COUNTRIES.get(country, False):
             continue
 
-        print(f"\n🤖 Analyzing {len(jobs)} jobs for {country_labels[country]}...")
+        # Pre-filter locally — no API call, cuts 126 jobs down to ~20
+        jobs = prefilter_jobs(jobs, top_n=20)
+        if not jobs:
+            print(f"  ℹ️  No relevant jobs after pre-filtering for {country_labels[country]}")
+            continue
 
-        # Batch into chunks of 30 (token limit safety)
-        batch_size = 10
+        print(f"\n🤖 Analyzing {len(jobs)} pre-filtered jobs for {country_labels[country]}...")
+
+        # 20 jobs = 1 batch = 1 API call per country = 4 total per run
+        batch_size = 20
         country_html_parts = []
 
         for i in range(0, len(jobs), batch_size):
@@ -911,10 +944,23 @@ def analyze_jobs_with_claude(all_jobs):
                 time.sleep(10)  # Gemini free tier — slightly longer pause 
 
             except Exception as e:
-                print(f"  ❌ Gemini error on batch {batch_num}: {e}")
-                country_html_parts.append(
-                    f"<p style='color:red;'>Error analyzing batch {batch_num}: {e}</p>"
-                )
+                error_str = str(e)
+                if "429" in error_str:
+                    import re as _re
+                    m = _re.search(r'seconds:\s*(\d+)', error_str)
+                    wait = int(m.group(1)) + 10 if m else 70
+                    print(f"  ⏳ Rate limited — waiting {wait}s then retrying...")
+                    time.sleep(wait)
+                    try:
+                        response = model.generate_content(prompt)
+                        country_html_parts.append(response.text)
+                        print(f"  ✅ Retry succeeded for batch {batch_num}")
+                    except Exception as e2:
+                        print(f"  ❌ Retry also failed: {e2}")
+                        country_html_parts.append(f"<p style='color:orange;'>Batch {batch_num} skipped (rate limit).</p>")
+                else:
+                    print(f"  ❌ Gemini error on batch {batch_num}: {e}")
+                    country_html_parts.append(f"<p style='color:red;'>Error on batch {batch_num}: {e}</p>")
 
         # Wrap country section with header
         country_section = f"""
@@ -1032,7 +1078,8 @@ def send_email(html_content):
     try:
         with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
             server.login(sender_email, sender_password)
-            server.sendmail(sender_email, recipient_email, msg.as_bytes())
+            #server.send_message(sender_email, recipient_email, msg.as_bytes())
+            server.send_message(msg)
         print(f"✅ Email sent to {recipient_email}")
     except Exception as e:
         print(f"❌ Failed to send email: {e}")
@@ -1275,7 +1322,8 @@ def send_error_email(error_type, error_detail):
 
         with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
             server.login(sender_email, sender_password)
-            server.sendmail(sender_email, recipient_email, msg.as_bytes())
+            #server.sendmail(sender_email, recipient_email, msg.as_bytes())
+            server.send_message(msg)
 
         print(f"⚠️  Error notification sent to {recipient_email}")
 
@@ -1325,7 +1373,8 @@ def send_no_matches_email():
 
         with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
             server.login(sender_email, sender_password)
-            server.sendmail(sender_email, recipient_email, msg.as_bytes())
+            #server.send_mail(sender_email, recipient_email, msg.as_bytes())
+            server.send_message(msg)
 
         print(f"📭 No-matches notification sent to {recipient_email}")
 
