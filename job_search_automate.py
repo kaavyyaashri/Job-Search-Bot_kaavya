@@ -1004,7 +1004,7 @@ def send_email(html_content):
       <div style="text-align:center; color:#aaa; font-size:12px;
                   margin-top:24px; padding-top:16px; border-top:1px solid #ddd;">
         <p style="margin:0;">
-          Generated automatically using Claude AI + GitHub Actions<br>
+          Generated automatically using Gemini AI + GitHub Actions<br>
           Run time: {run_time} &nbsp;·&nbsp;
           Regions: USA 🇺🇸 · India 🇮🇳 · Singapore 🇸🇬 · Ireland 🇮🇪
         </p>
@@ -1110,7 +1110,7 @@ def run_pipeline():
     # ── Check required environment variables ─────────────────
     print("\n🔐 Checking environment secrets...")
     required_secrets = [
-        "ANTHROPIC_API_KEY",
+        "GEMINI_API_KEY",
         "EMAIL_ADDRESS",
         "EMAIL_APP_PASSWORD",
         "EMAIL_TO",
@@ -1166,7 +1166,7 @@ def run_pipeline():
     # STEP 2 — Analyze + filter + score with Claude
     # ─────────────────────────────────────────────────────────
     print("\n" + "-"*60)
-    print("STEP 2 — Analyzing jobs with Claude AI")
+    print("STEP 2 — Analyzing jobs with Gemini AI")
     print("-"*60)
 
     try:
@@ -1327,81 +1327,4 @@ def send_no_matches_email():
 
 if __name__ == "__main__":
     run_pipeline()
-
-
-# ```
-
-# ---
-
-# ## What This Main Section Does
-# ```
-# run_pipeline() kicks off in this exact order:
-
-#   ✅ Print active regions + skipped regions
-#   ✅ Check all 3 resume files loaded correctly
-#   ✅ Verify all 4 GitHub secrets exist — EXIT with clear message if any missing
-#          ↓
-#   STEP 1 — fetch_all_jobs()
-#     → If zero jobs fetched → sends ⚠️ error email → exits cleanly
-#          ↓
-#   STEP 2 — analyze_jobs_with_claude()
-#     → If Claude returns no matches → sends 📭 no-matches email → exits cleanly
-#          ↓
-#   STEP 3 — send_email()
-#     → Sends full digest email
-#          ↓
-#   ✅ Final summary printed to GitHub Actions log
-# ```
-
-# ---
-
-# ## The 3 Email States You'll Receive
-
-# | Situation | Email you get |
-# |---|---|
-# | Bot works + matches found | 🚀 Full digest with job cards |
-# | Bot works + zero matches today | 📭 Short "nothing today" note |
-# | Bot crashes at any step | ⚠️ Error email with debug instructions |
-
-# This means **silence from the bot will never happen** — you'll always get one of these three emails every run so you always know what happened.
-
-# ---
-
-# ## Your Complete File Structure Right Now
-# ```
-# your-repo/
-# ├── job_search.py                     ← complete script
-# ├── resumes/
-# │   ├── product_engineer.docx
-# │   ├── test_validation_engineer.docx
-# │   └── applied_ai_engineer.docx
-# └── .github/
-#     └── workflows/
-#         └── job_search.yml
-# ```
-
-# ---
-
-# ## Final Checklist Before First Run
-# ```
-# □ All code sections added to job_search.py in order
-# □ RESUME_FILES paths match your actual filenames in /resumes
-# □ YOUR_PROFILE filled in with your actual degree + university
-# □ ACTIVE_COUNTRIES set correctly (all True to start)
-# □ 4 GitHub secrets added (ANTHROPIC_API_KEY, EMAIL_ADDRESS,
-#   EMAIL_APP_PASSWORD, EMAIL_TO)
-# □ Gmail App Password generated and saved as secret
-# □ Push everything to GitHub
-# □ Go to Actions tab → Run workflow manually to test
-# □ Check your inbox within 2 minutes
-
-
-
-
-
-
-
-
-
-
 
