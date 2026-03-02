@@ -284,6 +284,7 @@ def fetch_from_indeed(queries):
                     continue  # Skip old listings
 
                 def clean(text):
+                    text = text.replace('\xa0', ' ')
                     return text.encode("ascii", "ignore").decode("ascii").strip()
 
                 jobs.append({
@@ -855,7 +856,7 @@ def analyze_jobs_with_claude(all_jobs):
         return "<p style='color:#888;'>No new job listings found today.</p>"
 
     genai.configure(api_key=os.environ["GEMINI_API_KEY"])
-    model = genai.GenerativeModel("gemini-1.5-flash")
+    model = genai.GenerativeModel("gemini-1.5-flash-latest")
 
     # ── Group jobs by country context ──
     country_batches = {"usa": [], "india": [], "singapore": [], "ireland": []}
@@ -1020,7 +1021,7 @@ def send_email(html_content):
     try:
         with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
             server.login(sender_email, sender_password)
-            server.sendmail(sender_email, recipient_email, msg.as_string())
+            server.sendmail(sender_email, recipient_email, msg.as_bytes())
         print(f"✅ Email sent to {recipient_email}")
     except Exception as e:
         print(f"❌ Failed to send email: {e}")
