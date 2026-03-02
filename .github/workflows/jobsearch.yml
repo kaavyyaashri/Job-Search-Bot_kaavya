@@ -43,34 +43,34 @@ jobs:
           EMAIL_ADDRESS: ${{ secrets.EMAIL_ADDRESS }}
           EMAIL_APP_PASSWORD: ${{ secrets.EMAIL_APP_PASSWORD }}
           EMAIL_TO: ${{ secrets.EMAIL_TO }}
-        run: python job_search.py
-```
+        run: python job_search_automate.py
+# ```
 
----
+# ---
 
-## Step 3: Add Your GitHub Secrets
+# ## Step 3: Add Your GitHub Secrets
 
-Go to your GitHub repo → **Settings** → **Secrets and variables** → **Actions** → **New repository secret** and add these 4:
+# Go to your GitHub repo → **Settings** → **Secrets and variables** → **Actions** → **New repository secret** and add these 4:
 
-| Secret Name | What to put |
-|---|---|
-| `ANTHROPIC_API_KEY` | Your key from console.anthropic.com |
-| `EMAIL_ADDRESS` | Gmail you'll send FROM (e.g. `mybot@gmail.com`) |
-| `EMAIL_APP_PASSWORD` | Gmail App Password (see below) |
-| `EMAIL_TO` | Your personal email to receive the digest |
+# | Secret Name | What to put |
+# |---|---|
+# | `ANTHROPIC_API_KEY` | Your key from console.anthropic.com |
+# | `EMAIL_ADDRESS` | Gmail you'll send FROM (e.g. `mybot@gmail.com`) |
+# | `EMAIL_APP_PASSWORD` | Gmail App Password (see below) |
+# | `EMAIL_TO` | Your personal email to receive the digest |
 
-### Getting a Gmail App Password (takes 2 mins):
-1. Go to **myaccount.google.com** → Security
-2. Enable **2-Step Verification** if not already on
-3. Search "App Passwords" → Create one → Name it "Job Bot"
-4. Copy the 16-character password → paste as `EMAIL_APP_PASSWORD` secret
+# ### Getting a Gmail App Password (takes 2 mins):
+# 1. Go to **myaccount.google.com** → Security
+# 2. Enable **2-Step Verification** if not already on
+# 3. Search "App Passwords" → Create one → Name it "Job Bot"
+# 4. Copy the 16-character password → paste as `EMAIL_APP_PASSWORD` secret
 
----
+# ---
 
-## Your Folder Structure Should Look Like This:
-```
-your-repo/
-├── job_search.py                        ← main script
-└── .github/
-    └── workflows/
-        └── job_search.yml               ← GitHub Actions trigger
+# ## Your Folder Structure Should Look Like This:
+# ```
+# your-repo/
+# ├── job_search.py                        ← main script
+# └── .github/
+#     └── workflows/
+#         └── job_search.yml               ← GitHub Actions trigger
