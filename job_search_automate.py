@@ -856,7 +856,17 @@ def analyze_jobs_with_claude(all_jobs):
         return "<p style='color:#888;'>No new job listings found today.</p>"
 
     genai.configure(api_key=os.environ["GEMINI_API_KEY"])
+    # --- DIAGNOSTIC: Print available models ---
+    print("\n🔍 Checking available Gemini models for your API key:")
+    try:
+        for m in genai.list_models():
+            if 'generateContent' in m.supported_generation_methods:
+                print(f"  ⭐ {m.name}")
+    except Exception as e:
+        print(f"  ❌ Could not list models: {e}")
+    # ------------------------------------------
     model = genai.GenerativeModel("gemini-1.5-flash-latest")
+
 
     # ── Group jobs by country context ──
     country_batches = {"usa": [], "india": [], "singapore": [], "ireland": []}
@@ -1264,7 +1274,7 @@ def send_error_email(error_type, error_detail):
 
         with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
             server.login(sender_email, sender_password)
-            server.sendmail(sender_email, recipient_email, msg.as_string())
+            server.sendmail(sender_email, recipient_email, msg.as_bytes())
 
         print(f"⚠️  Error notification sent to {recipient_email}")
 
@@ -1314,7 +1324,7 @@ def send_no_matches_email():
 
         with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
             server.login(sender_email, sender_password)
-            server.sendmail(sender_email, recipient_email, msg.as_string())
+            server.sendmail(sender_email, recipient_email, msg.as_bytes())
 
         print(f"📭 No-matches notification sent to {recipient_email}")
 
