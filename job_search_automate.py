@@ -9,7 +9,7 @@ import xml.etree.ElementTree as ET
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from datetime import datetime
-
+import sys
 # ──────────────────────────────────────────────
 # YOUR PROFILE — Edit this section
 # ──────────────────────────────────────────────
@@ -283,10 +283,13 @@ def fetch_from_indeed(queries):
                 if not is_fresh_enough(pub_date, max_hours=24):
                     continue  # Skip old listings
 
+                def clean(text):
+                    return text.encode("ascii", "ignore").decode("ascii").strip()
+
                 jobs.append({
-                    "title":       item.findtext("title", "").strip(),
+                    "title":       clean(item.findtext("title", "")),
                     "link":        item.findtext("link", "").strip(),
-                    "description": item.findtext("description", "").strip()[:800],
+                    "description": clean(item.findtext("description", ""))[:800],
                     "date":        pub_date,
                     "source":      "Indeed",
                     "location":    entry["country"],
@@ -1014,8 +1017,8 @@ def send_email(html_content):
     </html>
     """
 
-    msg.attach(MIMEText(plain_text, "plain"))
-    msg.attach(MIMEText(full_html, "html"))
+    msg.attach(MIMEText(plain_text, "plain", "utf-8"))
+    msg.attach(MIMEText(full_html, "html", "utf-8"))
 
     try:
         with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
@@ -1069,8 +1072,6 @@ def send_email(html_content):
 # ──────────────────────────────────────────────
 # MAIN — Ties the full pipeline together
 # ──────────────────────────────────────────────
-
-import sys
 
 def run_pipeline():
     """
@@ -1261,7 +1262,7 @@ def send_error_email(error_type, error_detail):
         </html>
         """
 
-        msg.attach(MIMEText(html, "html"))
+        msg.attach(MIMEText(html, "html", "utf-8"))
 
         with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
             server.login(sender_email, sender_password)
@@ -1311,7 +1312,7 @@ def send_no_matches_email():
         </html>
         """
 
-        msg.attach(MIMEText(html, "html"))
+        msg.attach(MIMEText(html, "html", "utf-8"))
 
         with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
             server.login(sender_email, sender_password)
