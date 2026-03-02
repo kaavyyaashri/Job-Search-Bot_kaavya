@@ -1,6 +1,6 @@
 # Job Search automate code with the help of Claude
 
-import anthropic
+import google.generativeai as genai
 import smtplib
 import requests
 import os
@@ -854,7 +854,8 @@ def analyze_jobs_with_claude(all_jobs):
         print("No jobs to analyze.")
         return "<p style='color:#888;'>No new job listings found today.</p>"
 
-    client = anthropic.Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
+    genai.configure(api_key=os.environ["GEMINI_API_KEY"])
+    model = genai.GenerativeModel("gemini-1.5-flash")
 
     # ── Group jobs by country context ──
     country_batches = {"usa": [], "india": [], "singapore": [], "ireland": []}
@@ -893,13 +894,9 @@ def analyze_jobs_with_claude(all_jobs):
 
             try:
                 prompt = build_claude_prompt(batch, country)
-                response = client.messages.create(
-                    model="claude-sonnet-4-6",
-                    max_tokens=4000,
-                    messages=[{"role": "user", "content": prompt}]
-                )
-                country_html_parts.append(response.content[0].text)
-                time.sleep(1)  # Avoid rate limiting
+                response = model.generate_content(prompt)
+                country_html_parts.append(response.text)
+                time.sleep(2)  # Gemini free tier — slightly longer pause
 
             except Exception as e:
                 print(f"  ❌ Claude error on batch {batch_num}: {e}")
