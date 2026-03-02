@@ -908,7 +908,7 @@ def analyze_jobs_with_claude(all_jobs):
                 prompt = build_claude_prompt(batch, country)
                 response = model.generate_content(prompt)
                 country_html_parts.append(response.text)
-                time.sleep(10)  # Gemini free tier — slightly longer pause
+                time.sleep(10)  # Gemini free tier — slightly longer pause 
 
             except Exception as e:
                 print(f"  ❌ Gemini error on batch {batch_num}: {e}")
