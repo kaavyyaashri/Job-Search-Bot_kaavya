@@ -14,53 +14,68 @@ from datetime import datetime
 # YOUR PROFILE — Edit this section
 # ──────────────────────────────────────────────
 YOUR_PROFILE = """
+## Personal Details:
+- Name: Kaavya Sri Ramarapu
+- Location: Austin, TX
+- Email: ramarapukaavyasri@gmail.com
+
+## Education:
+- Master of Science in Electrical Engineering — Texas State University (Aug 2022 – May 2025)
+- Research Focus: Environment Emotion Classification to assist Children with ASD
+- Courses: Computer Architecture, Machine Learning for Engineering Applications,
+  Digital Image Processing, Engineering Economic Analysis, Statistical Methods
+- Bachelor of Technology in Electrical and Electronics Engineering
+  Jawaharlal Nehru Technological University, Hyderabad (Aug 2016 – Sept 2020)
+
 ## Target Roles (apply to ALL three):
-1. Product Engineer
-2. Test & Validation Engineer
-3. Applied AI Engineer — focused on Semiconductor or Industrial Automation companies
+1. Product Engineer — hardware/software product bring-up, validation, lifecycle improvement
+2. Test & Validation Engineer — PCB testing, embedded systems validation, structured debugging
+3. Applied AI Engineer — ML/AI in semiconductor or industrial automation environments
 
 ## Also Targeting:
 - Graduate Programs (rotational or structured graduate hire programs)
 - Rotational Engineering Programs at companies
 
-## Education:
-- Masters degree (Engineering or CS related)
-- New Graduate / Recently graduated
+## Key Skills:
+- Languages: Python, C, Linux scripting, SLURM
+- ML/AI: PyTorch, TensorFlow, deep learning, GPU-accelerated training, HPC clusters
+- Hardware: PCB testing, embedded systems, hardware-software validation
+- Tools: Root cause analysis, performance optimization, cross-functional collaboration
 
 ## Work Authorization:
-- OPT (Optional Practical Training)
+- OPT (Optional Practical Training) — authorized to work in USA
 - STEM OPT eligible
-- Does NOT require H1B sponsorship
+- Does NOT need H1B sponsorship right now
 - NOT a US Citizen or Green Card holder
-- NOT currently pursuing a degree (already graduated)
-- Open to companies that are OPT/STEM OPT friendly
-- Future sponsorship is flexible and company-dependent — not a priority right now
+- NOT currently enrolled as a student (graduated May 2025)
+- Future sponsorship is flexible and company-dependent
 
 ## Experience Level:
-- New Graduate / Entry Level
-- 0–2 years experience
+- New Graduate / Entry Level / 0–2 years
 
 ## Preferred Company Types:
 - Startups and mid-size companies
-- Semiconductor companies (e.g., NVIDIA, AMD, Qualcomm, Texas Instruments, Applied Materials, Lam Research, KLA, Marvell)
-- Industrial Automation companies (e.g., Siemens, ABB, Rockwell Automation, Honeywell, Emerson, Cognex, National Instruments)
+- Semiconductor companies (NVIDIA, AMD, Qualcomm, Texas Instruments, Applied Materials,
+  Lam Research, KLA, Marvell, Lattice, Microchip, Infineon, NXP, STMicroelectronics)
+- Industrial Automation (Siemens, ABB, Rockwell Automation, Honeywell, Emerson,
+  Cognex, National Instruments / NI, Fanuc, KUKA, Zebra Technologies)
 - Companies with structured new grad / rotational programs
 
-## Preferred Locations (in order of preference):
-- Austin, TX
-- Los Angeles, CA
-- Boston, MA
-- Seattle, WA
-- San Francisco, CA
-- Remote (USA-based) — also acceptable
+## Preferred Locations (in order):
+1. Austin, TX
+2. Los Angeles, CA
+3. Boston, MA
+4. Seattle, WA
+5. San Francisco, CA
+6. Remote (USA-based)
 
 ## HARD FILTERS — Skip any job that says:
-- "US Citizen only"
-- "Green Card required"
-- "Must be authorized to work without sponsorship" (this blocks OPT too at some companies)
+- "US Citizen only" or "US Citizen required"
+- "Green Card required" or "Permanent Resident required"
 - "Security clearance required"
-- "Currently pursuing a degree" (already graduated)
+- "Currently pursuing a degree" or "Must be enrolled"
 - "Active student enrollment required"
+- "No international students"
 """
 
 # ──────────────────────────────────────────────
