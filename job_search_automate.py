@@ -219,22 +219,22 @@ def build_greenhouse_urls():
     return urls
 
 
-def build_wellfound_urls(queries):
-    """Wellfound (AngelList) — great for startups, has public RSS"""
-    role_map = {
-        "product engineer": "product-engineer",
-        "test engineer": "test-engineer",
-        "applied ai": "ai-engineer",
-        "validation engineer": "validation-engineer",
-    }
-    urls = []
-    for role_key, role_slug in role_map.items():
-        urls.append({
-            "url": f"https://wellfound.com/role/r/{role_slug}?utm_source=rss",
-            "source": "Wellfound",
-            "role": role_key,
-        })
-    return urls
+# def build_wellfound_urls(queries):
+#     """Wellfound (AngelList) — great for startups, has public RSS"""
+#     role_map = {
+#         "product engineer": "product-engineer",
+#         "test engineer": "test-engineer",
+#         "applied ai": "ai-engineer",
+#         "validation engineer": "validation-engineer",
+#     }
+#     urls = []
+#     for role_key, role_slug in role_map.items():
+#         urls.append({
+#             "url": f"https://wellfound.com/role/r/{role_slug}?utm_source=rss",
+#             "source": "Wellfound",
+#             "role": role_key,
+#         })
+#     return urls
 
 
 # ──────────────────────────────────────────────
