@@ -4,6 +4,7 @@ import anthropic
 import smtplib
 import requests
 import os
+from docx import Document
 import xml.etree.ElementTree as ET
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
@@ -462,9 +463,6 @@ def fetch_all_jobs():
 # ──────────────────────────────────────────────
 # RESUME LOADER — reads actual .docx files
 # ──────────────────────────────────────────────
-import os
-from docx import Document
-
 # Map role categories to resume filenames in the /resumes folder
 RESUME_FILES = {
     "product_engineer":         "resumes/01.Kaavya_Sri_Resume_2026.docx",
