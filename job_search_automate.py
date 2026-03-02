@@ -459,31 +459,72 @@ def fetch_all_jobs():
 
 # Resume summaries for each role — Claude uses these to score match
 # Paste a short summary of each resume here (3-5 bullet points each)
-RESUME_SUMMARIES = {
-    "product_engineer": """
-    - Masters in [Your Degree] from [Your University], graduated [Year]
-    - Built [X] product features using React, Node.js, Python
-    - Experience with API design, system design, cross-functional collaboration
-    - Worked on [mention a project or internship]
-    - OPT authorized, STEM OPT eligible
-    """,
+# ──────────────────────────────────────────────
+# RESUME LOADER — reads actual .docx files
+# ──────────────────────────────────────────────
+import os
+from docx import Document
 
-    "test_validation_engineer": """
-    - Masters in [Your Degree] from [Your University], graduated [Year]
-    - Experience with hardware/software test frameworks, test automation
-    - Familiarity with semiconductor testing, validation methodologies
-    - Worked on [mention a project or internship]
-    - OPT authorized, STEM OPT eligible
-    """,
-
-    "applied_ai_engineer": """
-    - Masters in [Your Degree] from [Your University], graduated [Year]
-    - Experience with Python, PyTorch/TensorFlow, ML model deployment
-    - Interest in AI applications for semiconductor or industrial automation
-    - Worked on [mention a project or internship]
-    - OPT authorized, STEM OPT eligible
-    """,
+# Map role categories to resume filenames in the /resumes folder
+RESUME_FILES = {
+    "product_engineer":         "resumes/product_engineer.docx",
+    "test_validation_engineer": "resumes/test_validation_engineer.docx",
+    "applied_ai_engineer":      "resumes/applied_ai_engineer.docx",
 }
+
+def load_resume(role_category):
+    """
+    Reads the .docx resume file for the given role category.
+    Returns extracted text, or a fallback message if file not found.
+    """
+    filepath = RESUME_FILES.get(role_category)
+
+    if not filepath:
+        return "Resume not available for this role category."
+
+    if not os.path.exists(filepath):
+        print(f"  ⚠️  Resume file not found: {filepath}")
+        return f"Resume file missing: {filepath} — please add it to the repo."
+
+    try:
+        doc = Document(filepath)
+        full_text = []
+
+        for para in doc.paragraphs:
+            text = para.text.strip()
+            if text:
+                full_text.append(text)
+
+        # Also extract text from tables (some resumes use table layouts)
+        for table in doc.tables:
+            for row in table.rows:
+                for cell in row.cells:
+                    cell_text = cell.text.strip()
+                    if cell_text:
+                        full_text.append(cell_text)
+
+        extracted = "\n".join(full_text)
+
+        # Trim to ~2000 chars to stay within Claude token limits
+        # Keeps the most important top section of your resume
+        if len(extracted) > 2000:
+            extracted = extracted[:2000] + "\n... [resume trimmed for brevity]"
+
+        print(f"  ✅ Loaded resume: {filepath} ({len(extracted)} chars)")
+        return extracted
+
+    except Exception as e:
+        print(f"  ❌ Error reading resume {filepath}: {e}")
+        return f"Could not read resume file: {e}"
+
+
+# Pre-load all resumes once at startup (not on every job iteration)
+print("\n📄 Loading resume files...")
+LOADED_RESUMES = {
+    role: load_resume(role)
+    for role in RESUME_FILES.keys()
+}
+print("✅ Resumes loaded\n")
 
 
 def detect_role_category(job_title, job_description):
@@ -589,7 +630,7 @@ This means:
     jobs_text = ""
     for i, job in enumerate(jobs_batch, 1):
         role_cat = detect_role_category(job["title"], job["description"])
-        resume = RESUME_SUMMARIES[role_cat]
+        resume = LOADED_RESUMES.get(role_cat, "Resume not available")
         jobs_text += f"""
 ---
 Job #{i}
