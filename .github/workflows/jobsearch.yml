@@ -34,7 +34,6 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install anthropic requests
           pip install anthropic requests python-docx
 
       - name: Run job search bot
