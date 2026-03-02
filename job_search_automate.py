@@ -525,8 +525,8 @@ def load_resume(role_category):
 
         # Trim to ~2000 chars to stay within Gemini token limits
         # Keeps the most important top section of your resume
-        if len(extracted) > 2000:
-            extracted = extracted[:2000] + "\n... [resume trimmed for brevity]"
+        if len(extracted) > 1000:
+            extracted = extracted[:1000] + "\n... [resume trimmed for brevity]"
 
         print(f"  ✅ Loaded resume: {filepath} ({len(extracted)} chars)")
         return extracted
@@ -895,7 +895,7 @@ def analyze_jobs_with_claude(all_jobs):
         print(f"\n🤖 Analyzing {len(jobs)} jobs for {country_labels[country]}...")
 
         # Batch into chunks of 30 (token limit safety)
-        batch_size = 30
+        batch_size = 10
         country_html_parts = []
 
         for i in range(0, len(jobs), batch_size):
@@ -908,7 +908,7 @@ def analyze_jobs_with_claude(all_jobs):
                 prompt = build_claude_prompt(batch, country)
                 response = model.generate_content(prompt)
                 country_html_parts.append(response.text)
-                time.sleep(2)  # Gemini free tier — slightly longer pause
+                time.sleep(10)  # Gemini free tier — slightly longer pause
 
             except Exception as e:
                 print(f"  ❌ Gemini error on batch {batch_num}: {e}")
