@@ -456,6 +456,7 @@ def fetch_all_jobs():
     all_jobs += fetch_from_indeed(active_queries)
     all_jobs += fetch_from_greenhouse()
     all_jobs += fetch_country_specific()
+    # all_jobs += fetch_from_wellfound()
 
     # Deduplicate by link
     seen = set()
