@@ -33,8 +33,7 @@ jobs:
           python-version: "3.11"
 
       - name: Install dependencies
-        run: |
-          pip install anthropic requests python-docx
+        run: pip install anthropic requests python-docx
 
       - name: Run job search bot
         env:
