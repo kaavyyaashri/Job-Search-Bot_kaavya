@@ -4,7 +4,7 @@ countries:
     cron_utc: "0 14 * * *"
     send_email_at: "08:00"
     boards:
-      - linkedin
+      - indeed
       - glassdoor
     search_keywords:
       - "remote"
@@ -19,12 +19,12 @@ countries:
     cron_utc: "30 2 * * *"
     send_email_at: "08:00"
     boards:
-      - linkedin
+      - indeed
       - naukri
     search_keywords:
       - "India"
       - "Bangalore"
-      - "Mumbai"
+      - "Pune"
       - "Hyderabad"
     location_keywords:
       - "India"
@@ -38,7 +38,7 @@ countries:
     cron_utc: "0 0 * * *"
     send_email_at: "08:00"
     boards:
-      - linkedin
+      - indeed
       - glassdoor
     search_keywords:
       - "Singapore"
