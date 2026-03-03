@@ -20,11 +20,11 @@ jobs:
           python-version: '3.11'
 
       - name: Install dependencies
-        run: pip install google-genai python-docx
+        run: pip install groq python-docx
 
       - name: Parse resume
         env:
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}        
         run: python src/resume_parser.py
 
       - name: Commit updated resume_profile.json
