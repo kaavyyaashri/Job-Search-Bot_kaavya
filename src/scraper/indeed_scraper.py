@@ -1,29 +1,20 @@
-import feedparser
 import requests
+import feedparser
 from datetime import datetime, timezone
 from dateutil import parser as dateparser
 from .base_scraper import BaseScraper, Job
 
-# LinkedIn RSS URL template
-# f_TPR=r86400 → posted in last 24 hours
-# keywords and location are injected per country
-LINKEDIN_RSS = (
-    "https://www.linkedin.com/jobs-guest/jobs/api/seeMoreJobPostings/search"
-    "?keywords={keywords}&location={location}&f_TPR=r86400&start=0"
-)
+# Indeed RSS — free, no auth, reliable
+# fromage=1 → posted in last 1 day
+INDEED_RSS = "https://www.indeed.com/rss?q={keyword}&l={location}&fromage=1&sort=date"
 
-LINKEDIN_RSS_FEED = (
-    "https://www.linkedin.com/jobs/search/rss"
-    "?keywords={keywords}&location={location}&f_TPR=r86400"
-)
-
-class LinkedInScraper(BaseScraper):
+class IndeedScraper(BaseScraper):
 
     def scrape(self) -> list[Job]:
         all_jobs = []
 
-        for keyword in self.keywords[:2]:           # top 2 keywords to stay within limits
-            for location in self.locations[:2]:     # top 2 locations
+        for keyword in self.keywords[:2]:
+            for location in self.locations[:2]:
                 jobs = self._fetch_rss(keyword, location)
                 all_jobs.extend(jobs)
 
@@ -35,37 +26,30 @@ class LinkedInScraper(BaseScraper):
                 seen.add(job.url)
                 unique_jobs.append(job)
 
-        print(f"   LinkedIn → {len(unique_jobs)} unique jobs found for {self.country}")
+        print(f"   Indeed → {len(unique_jobs)} unique jobs found for {self.country}")
         return unique_jobs
 
     def _fetch_rss(self, keyword: str, location: str) -> list[Job]:
-        url = LINKEDIN_RSS_FEED.format(
-            keywords=keyword.replace(' ', '+'),
+        url = INDEED_RSS.format(
+            keyword=keyword.replace(' ', '+'),
             location=location.replace(' ', '+')
         )
 
         headers = {
-            "User-Agent": "Mozilla/5.0 (compatible; RSS reader)"
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
         }
 
         try:
             response = requests.get(url, headers=headers, timeout=10)
-            feed = feedparser.parse(response.content)
-            jobs = []
+            feed     = feedparser.parse(response.content)
+            jobs     = []
 
             for entry in feed.entries:
-                title    = entry.get('title', '').strip()
-                link     = entry.get('link', '').strip()
-                summary  = entry.get('summary', '')[:500]
-                pub_date = entry.get('published', '')
-
-                # Parse company and location from title
-                # LinkedIn RSS title format: "Job Title at Company"
-                company = ''
-                if ' at ' in title:
-                    parts   = title.rsplit(' at ', 1)
-                    title   = parts[0].strip()
-                    company = parts[1].strip()
+                title       = entry.get('title', '').strip()
+                link        = entry.get('link', '').strip()
+                summary     = entry.get('summary', '')[:500]
+                pub_date    = entry.get('published', '')
+                company     = entry.get('source', {}).get('title', 'Unknown')
 
                 # Normalize date
                 try:
@@ -81,12 +65,12 @@ class LinkedInScraper(BaseScraper):
                         posted_at=posted_at,
                         description=summary,
                         url=link,
-                        source='linkedin',
+                        source='indeed',
                         country=self.country
                     ))
 
             return jobs
 
         except Exception as e:
-            print(f"   ⚠️  LinkedIn RSS error for '{keyword}' / '{location}': {e}")
+            print(f"   ⚠️  Indeed RSS error for '{keyword}' / '{location}': {e}")
             return []
