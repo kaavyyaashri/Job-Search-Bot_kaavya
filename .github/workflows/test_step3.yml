@@ -1,4 +1,4 @@
-name: Test Step 3 — LinkedIn Scraper
+name: Test Step 3 — All Scrapers
 
 on:
   workflow_dispatch:
@@ -22,7 +22,7 @@ jobs:
           python-version: '3.11'
 
       - name: Install dependencies
-        run: pip install feedparser requests python-dateutil pyyaml
+        run: pip install requests feedparser beautifulsoup4 lxml python-dateutil pyyaml
 
-      - name: Test LinkedIn scraper
+      - name: Test scrapers
         run: python src/test_scrapers.py --country ${{ github.event.inputs.country }}
