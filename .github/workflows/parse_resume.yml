@@ -1,0 +1,36 @@
+name: Step 2 — Parse Resume
+
+on:
+  workflow_dispatch:       # Manual trigger
+  push:
+    paths:
+      - 'resumes/**'       # Auto re-runs if you upload a new resume
+
+jobs:
+  parse:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install google-generativeai python-docx
+
+      - name: Parse resume
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: python src/resume_parser.py
+
+      - name: Commit updated resume_profile.json
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/resume_profile.json
+          git diff --staged --quiet || git commit -m "chore: update resume_profile.json [auto]"
+          git push
