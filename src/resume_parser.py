@@ -1,8 +1,8 @@
 import os
 import json
-import google.generativeai as genai
+from google import genai                        
+from google.genai import types
 from docx import Document
-
 # ── Paths ──────────────────────────────────────────────
 RESUME_PATH = os.path.join(
     os.path.dirname(__file__), '..', 
@@ -28,9 +28,11 @@ def parse_resume_with_gemini(resume_text: str) -> dict:
     api_key = os.environ.get('GEMINI_API_KEY')
     if not api_key:
         raise ValueError("GEMINI_API_KEY not set in environment/secrets")
+
+    client = genai.Client(api_key=api_key)
     
-    genai.configure(api_key=api_key)
-    model = genai.GenerativeModel('gemini-1.5-flash')
+    # genai.configure(api_key=api_key)
+    # model = genai.GenerativeModel('gemini-1.5-flash')
 
     prompt = f"""
 You are a resume parser. Extract structured information from the resume below.
@@ -54,7 +56,10 @@ Resume:
 \"\"\"
 """
 
-    response = model.generate_content(prompt)
+    response = client.models.generate_content(
+        model='gemini-2.0-flash',               
+        contents=prompt
+    )
     raw = response.text.strip()
 
     # Strip accidental markdown fences if Gemini adds them
