@@ -22,13 +22,13 @@ def extract_text_from_docx(path: str) -> str:
     return '\n'.join(full_text)
 
 def parse_resume_with_gemini(resume_text: str) -> dict:
-    """Send resume text to Gemini Flash and extract structured profile"""
-    
-    api_key = os.environ.get('GEMINI_API_KEY')
-    if not api_key:
-        raise ValueError("GEMINI_API_KEY not set in environment/secrets")
+    """Send resume text to Groq and extract structured profile"""
 
-    client = genai.Client(api_key=api_key)
+    api_key = os.environ.get('GROQ_API_KEY')
+    if not api_key:
+        raise ValueError("GROQ_API_KEY not set in environment/secrets")
+
+    client = Groq(api_key=api_key)
     
     # genai.configure(api_key=api_key)
     # model = genai.GenerativeModel('gemini-1.5-flash')
@@ -55,11 +55,23 @@ Resume:
 \"\"\"
 """
 
-    response = client.models.generate_content(
-        model='gemini-2.0-flash',               
-        contents=prompt
+    response = client.chat.completions.create(
+        model="llama-3.1-8b-instant",           # free, fast, great at extraction
+        messages=[
+            {
+                "role": "system",
+                "content": "You are a precise resume parser. Always return valid JSON only. No markdown, no explanation."
+            },
+            {
+                "role": "user",
+                "content": prompt
+            }
+        ],
+        temperature=0.1,                        # low temp = consistent structured output
+        max_tokens=1000
     )
-    raw = response.text.strip()
+
+    raw = response.choices[0].message.content.strip()
 
     # Strip accidental markdown fences if Gemini adds them
     if raw.startswith("```"):
