@@ -1,1 +1,7 @@
-
+{
+  "target_titles": ["Software Engineer", "Backend Developer"],
+  "skills": ["Python", "FastAPI", "PostgreSQL", "Docker", "AWS"],
+  "experience_years": 4,
+  "seniority": "mid",
+  "industries": ["fintech", "SaaS", "startups"]
+}
