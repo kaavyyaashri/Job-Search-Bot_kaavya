@@ -1,7 +1,6 @@
 import os
 import json
-from google import genai                        
-from google.genai import types
+from groq import Groq
 from docx import Document
 # ── Paths ──────────────────────────────────────────────
 RESUME_PATH = os.path.join(
