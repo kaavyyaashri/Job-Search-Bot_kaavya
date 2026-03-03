@@ -1,0 +1,28 @@
+name: Test Step 3 — LinkedIn Scraper
+
+on:
+  workflow_dispatch:
+    inputs:
+      country:
+        description: 'Country to test (USA / India / Singapore)'
+        required: true
+        default: 'USA'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install feedparser requests python-dateutil pyyaml
+
+      - name: Test LinkedIn scraper
+        run: python src/test_scrapers.py --country ${{ github.event.inputs.country }}
