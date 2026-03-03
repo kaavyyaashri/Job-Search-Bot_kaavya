@@ -1,0 +1,55 @@
+name: Test Step 1 — Config & Skeleton
+
+on:
+  workflow_dispatch:        # ← Manual trigger button in GitHub UI
+    inputs:
+      country:
+        description: 'Country to test (USA / India / Singapore)'
+        required: true
+        default: 'USA'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install pyyaml
+
+      - name: Run pipeline skeleton
+        run: python src/main.py --country ${{ github.event.inputs.country }}
+```
+
+---
+
+## How to Run It in GitHub
+```
+1. Go to your repo on GitHub
+2. Click the "Actions" tab
+3. Find "Test Step 1 — Config & Skeleton" in the left sidebar
+4. Click "Run workflow" (dropdown on the right)
+5. Pick a country → click the green "Run workflow" button
+6. Click the running job to watch live logs
+```
+
+---
+
+## What You Should See in the Logs
+```
+✅ Config loaded for USA
+   Boards : ['linkedin', 'glassdoor']
+   Timezone: America/Chicago
+
+✅ Resume profile loaded
+   Titles : ['Software Engineer', 'Backend Developer']
+   Skills : ['Python', 'FastAPI', 'PostgreSQL', 'Docker', 'AWS']
+
+🚧 Scraper, scorer, and email modules coming in next steps.
