@@ -3,33 +3,44 @@ import os
 sys.path.insert(0, os.path.dirname(__file__))
 
 from config_loader import get_country_config
-from scraper.linkedin_scraper import LinkedInScraper
+from scraper.indeed_scraper import IndeedScraper
+from scraper.glassdoor_scraper import GlassdoorScraper
+from scraper.naukri_scraper import NaukriScraper
 
-def test_linkedin(country_name: str):
-    print(f"\n🔍 Testing LinkedIn Scraper — {country_name}")
+def print_sample(jobs, source):
+    print(f"\n✅ {source} → {len(jobs)} jobs found")
+    if jobs:
+        print(f"   📋 Sample:")
+        print(f"      Title   : {jobs[0].title}")
+        print(f"      Company : {jobs[0].company}")
+        print(f"      Location: {jobs[0].location}")
+        print(f"      Posted  : {jobs[0].posted_at}")
+        print(f"      URL     : {jobs[0].url[:80]}...")
+    else:
+        print(f"   ⚠️  No jobs returned")
+
+def test_all(country_name: str):
+    print(f"\n🔍 Testing All Scrapers — {country_name}")
     print("=" * 50)
 
     config  = get_country_config(country_name)
-    scraper = LinkedInScraper(config)
-    jobs    = scraper.scrape()
+    boards  = config['boards']
 
-    print(f"\n✅ Total jobs scraped: {len(jobs)}")
+    if 'indeed' in boards:
+        jobs = IndeedScraper(config).scrape()
+        print_sample(jobs, 'Indeed')
 
-    if jobs:
-        print(f"\n📋 Sample job #1:")
-        print(f"   Title   : {jobs[0].title}")
-        print(f"   Company : {jobs[0].company}")
-        print(f"   Location: {jobs[0].location}")
-        print(f"   Posted  : {jobs[0].posted_at}")
-        print(f"   Source  : {jobs[0].source}")
-        print(f"   URL     : {jobs[0].url[:80]}...")
-    else:
-        print("\n⚠️  No jobs returned — LinkedIn may be blocking RSS for this region.")
+    if 'glassdoor' in boards:
+        jobs = GlassdoorScraper(config).scrape()
+        print_sample(jobs, 'Glassdoor')
+
+    if 'naukri' in boards:
+        jobs = NaukriScraper(config).scrape()
+        print_sample(jobs, 'Naukri')
 
 if __name__ == '__main__':
     import argparse
     parser = argparse.ArgumentParser()
-    parser.add_argument('--country', required=True, help='USA / India / Singapore')
+    parser.add_argument('--country', required=True)
     args = parser.parse_args()
-
-    test_linkedin(args.country)
+    test_all(args.country)
