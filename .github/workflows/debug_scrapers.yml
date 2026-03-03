@@ -1,0 +1,20 @@
+name: Debug Scrapers
+
+on:
+  workflow_dispatch:
+
+jobs:
+  debug:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install requests feedparser beautifulsoup4 lxml
+
+      - name: Run debug
+        run: python src/debug_scrapers.py
