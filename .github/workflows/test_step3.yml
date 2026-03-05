@@ -1,4 +1,4 @@
-name: Test Step 3 — All Scrapers
+name: Test Step 3 — JSearch Scraper
 
 on:
   workflow_dispatch:
@@ -22,7 +22,54 @@ jobs:
           python-version: '3.11'
 
       - name: Install dependencies
-        run: pip install requests feedparser beautifulsoup4 lxml python-dateutil pyyaml
+        run: pip install requests pyyaml python-dateutil
 
-      - name: Test scrapers
+      - name: Test JSearch scraper
+        env:
+          RAPIDAPI_KEY: ${{ secrets.RAPIDAPI_KEY }}
         run: python src/test_scrapers.py --country ${{ github.event.inputs.country }}
+```
+
+---
+
+## Files to Delete (No Longer Needed)
+```
+src/scraper/indeed_scraper.py      ← delete
+src/scraper/glassdoor_scraper.py   ← delete
+src/scraper/naukri_scraper.py      ← delete
+src/debug_scrapers.py              ← delete
+.github/workflows/debug_scrapers.yml ← delete
+```
+
+---
+
+## Expected Output
+```
+🔍 Testing JSearch Scraper — USA
+==================================================
+   JSearch → 10 unique jobs found for USA
+
+✅ JSearch → 10 jobs found
+
+📋 Sample jobs:
+
+   #1
+      Title   : Senior Backend Engineer
+      Company : Stripe
+      Location: San Francisco, US
+      Source  : indeed
+      Posted  : 2026-03-03T08:00:00+00:00
+      URL     : https://www.indeed.com/viewjob?jk=...
+
+   #2
+      Title   : Python Developer
+      Company : Plaid
+      Location: New York, US
+      Source  : glassdoor
+      Posted  : 2026-03-03T07:30:00+00:00
+      URL     : https://www.glassdoor.com/...
+
+📊 Sources breakdown:
+   indeed          : 6 jobs
+   glassdoor       : 3 jobs
+   linkedin        : 1 jobs
