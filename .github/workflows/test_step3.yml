@@ -1,4 +1,4 @@
-name: Test Step 3 — JSearch Scraper
+name: Test Step 3 — JobSpy Scraper
 
 on:
   workflow_dispatch:
@@ -22,10 +22,39 @@ jobs:
           python-version: '3.11'
 
       - name: Install dependencies
-        run: pip install requests pyyaml python-dateutil
+        run: pip install python-jobspy python-dateutil pyyaml
 
-      - name: Test JSearch scraper
-        env:
-          RAPIDAPI_KEY: ${{ secrets.RAPIDAPI_KEY }}
+      - name: Test JobSpy scraper
         run: python src/test_scrapers.py --country ${{ github.event.inputs.country }}
+
+# name: Test Step 3 — JSearch Scraper
+
+# on:
+#   workflow_dispatch:
+#     inputs:
+#       country:
+#         description: 'Country to test (USA / India / Singapore)'
+#         required: true
+#         default: 'USA'
+
+# jobs:
+#   test:
+#     runs-on: ubuntu-latest
+
+#     steps:
+#       - name: Checkout repo
+#         uses: actions/checkout@v4
+
+#       - name: Set up Python
+#         uses: actions/setup-python@v5
+#         with:
+#           python-version: '3.11'
+
+#       - name: Install dependencies
+#         run: pip install requests pyyaml python-dateutil
+
+#       - name: Test JSearch scraper
+#         env:
+#           RAPIDAPI_KEY: ${{ secrets.RAPIDAPI_KEY }}
+#         run: python src/test_scrapers.py --country ${{ github.event.inputs.country }}
 
