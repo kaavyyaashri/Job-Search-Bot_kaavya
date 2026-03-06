@@ -1,1 +1,179 @@
+import os
+import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+from datetime import datetime
+import pytz
 
+def build_html_email(jobs: list[dict], country: str) -> str:
+    """Build a clean HTML email digest from top 10 jobs"""
+
+    today = datetime.now().strftime("%B %d, %Y")
+
+    # ── Job rows ──────────────────────────────────────
+    job_rows = ""
+    for job in jobs:
+        rank           = job.get('rank', '?')
+        title          = job.get('title', 'Unknown Title')
+        company        = job.get('company', 'Unknown Company')
+        location       = job.get('location', '')
+        match_score    = job.get('match_score', 0)
+        match_reason   = job.get('match_reason', '')
+        matched_skills = job.get('matched_skills', [])
+        missing_skills = job.get('missing_skills', [])
+        source         = job.get('source', '').capitalize()
+        posted_at      = job.get('posted_at', '')
+        url            = job.get('url', '#')
+
+        # Format posted date
+        try:
+            dt         = datetime.fromisoformat(str(posted_at))
+            posted_str = dt.strftime("%b %d, %Y")
+        except Exception:
+            posted_str = str(posted_at)[:10] if posted_at else 'Today'
+
+        # Skills pills
+        matched_html = ''.join(
+            f'<span style="background:#d4edda;color:#155724;padding:2px 8px;'
+            f'border-radius:12px;font-size:12px;margin:2px;display:inline-block;">'
+            f'✅ {s}</span>' for s in matched_skills
+        )
+        missing_html = ''.join(
+            f'<span style="background:#f8d7da;color:#721c24;padding:2px 8px;'
+            f'border-radius:12px;font-size:12px;margin:2px;display:inline-block;">'
+            f'❌ {s}</span>' for s in missing_skills
+        )
+
+        # Score color
+        if match_score >= 80:
+            score_color = '#28a745'
+        elif match_score >= 60:
+            score_color = '#fd7e14'
+        else:
+            score_color = '#6c757d'
+
+        job_rows += f"""
+        <div style="background:#ffffff;border:1px solid #e0e0e0;border-radius:8px;
+                    padding:20px;margin-bottom:16px;">
+
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+            <div>
+              <span style="background:#e9ecef;color:#495057;padding:2px 8px;
+                           border-radius:12px;font-size:12px;">#{rank}</span>
+              <h3 style="margin:8px 0 4px;color:#212529;font-size:18px;">{title}</h3>
+              <p style="margin:0;color:#6c757d;font-size:14px;">
+                🏢 {company} &nbsp;|&nbsp; 📍 {location} &nbsp;|&nbsp;
+                🔗 {source} &nbsp;|&nbsp; 📅 {posted_str}
+              </p>
+            </div>
+            <div style="text-align:center;min-width:70px;">
+              <div style="font-size:24px;font-weight:bold;color:{score_color};">
+                {match_score}%
+              </div>
+              <div style="font-size:11px;color:#6c757d;">match</div>
+            </div>
+          </div>
+
+          {f'<p style="margin:12px 0 8px;color:#495057;font-size:14px;'
+           f'font-style:italic;">💡 {match_reason}</p>' if match_reason else ''}
+
+          <div style="margin:8px 0;">
+            {matched_html}
+            {missing_html}
+          </div>
+
+          <a href="{url}"
+             style="display:inline-block;margin-top:12px;padding:8px 20px;
+                    background:#0d6efd;color:#ffffff;text-decoration:none;
+                    border-radius:6px;font-size:14px;font-weight:500;">
+            View Job →
+          </a>
+        </div>
+        """
+
+    # ── Full email template ───────────────────────────
+    html = f"""
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+    </head>
+    <body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+                 background:#f8f9fa;margin:0;padding:20px;">
+
+      <div style="max-width:680px;margin:0 auto;">
+
+        <!-- Header -->
+        <div style="background:linear-gradient(135deg,#0d6efd,#0099ff);
+                    border-radius:12px;padding:28px;margin-bottom:20px;color:white;">
+          <h1 style="margin:0 0 8px;font-size:24px;">
+            🧑‍💻 Top {len(jobs)} Job Matches — {country}
+          </h1>
+          <p style="margin:0;opacity:0.9;font-size:15px;">{today}</p>
+          <p style="margin:8px 0 0;opacity:0.85;font-size:13px;">
+            Matched against your resume skills and target titles
+          </p>
+        </div>
+
+        <!-- Jobs -->
+        {job_rows}
+
+        <!-- Footer -->
+        <div style="text-align:center;padding:20px;color:#6c757d;font-size:12px;
+                    border-top:1px solid #dee2e6;margin-top:8px;">
+          <p style="margin:0;">
+            🤖 Generated by your Job Search Bot &nbsp;|&nbsp; {today}
+          </p>
+          <p style="margin:4px 0 0;">
+            {len(jobs)} jobs matched from Indeed + LinkedIn
+          </p>
+        </div>
+
+      </div>
+    </body>
+    </html>
+    """
+    return html
+
+def send_email(jobs: list[dict], country: str):
+    """Send the job digest email via Gmail SMTP"""
+
+    gmail_user     = os.environ.get('GMAIL_USER', '').strip()
+    gmail_password = os.environ.get('GMAIL_APP_PASSWORD', '').strip()
+    recipient      = os.environ.get('RECIPIENT_EMAIL', gmail_user).strip()
+
+    if not gmail_user or not gmail_password:
+        raise ValueError("GMAIL_USER or GMAIL_APP_PASSWORD not set in secrets")
+
+    today   = datetime.now().strftime("%B %d, %Y")
+    subject = f"🧑‍💻 Top {len(jobs)} Job Matches — {country} | {today}"
+
+    # Build email
+    msg = MIMEMultipart('alternative')
+    msg['Subject'] = subject
+    msg['From']    = gmail_user
+    msg['To']      = recipient
+
+    # Plain text fallback
+    plain_text = f"Top {len(jobs)} job matches for {country} on {today}\n\n"
+    for job in jobs:
+        plain_text += (
+            f"#{job.get('rank')} {job.get('title')} @ {job.get('company')}\n"
+            f"Match: {job.get('match_score')}% | {job.get('location')}\n"
+            f"{job.get('url')}\n\n"
+        )
+
+    html_content = build_html_email(jobs, country)
+
+    msg.attach(MIMEText(plain_text, 'plain'))
+    msg.attach(MIMEText(html_content, 'html'))
+
+    # Send via Gmail SMTP
+    print(f"   📧 Sending email to {recipient}...")
+    with smtplib.SMTP_SSL('smtp.gmail.com', 465) as server:
+        server.login(gmail_user, gmail_password)
+        server.sendmail(gmail_user, recipient, msg.as_string())
+
+    print(f"   ✅ Email sent successfully to {recipient}")
+    print(f"   📬 Subject: {subject}")
