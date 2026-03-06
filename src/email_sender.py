@@ -132,16 +132,16 @@ def build_html_email(jobs: list[dict], country: str) -> str:
 
       </div>
     </body>
-    </html>
-    """
-    return html
+    </html> """
+    
+return html
 
 def send_email(jobs: list[dict], country: str):
     """Send the job digest email via Gmail SMTP"""
 
-    gmail_user     = os.environ.get('GMAIL_USER', '').strip()
-    gmail_password = os.environ.get('GMAIL_APP_PASSWORD', '').strip()
-    recipient      = os.environ.get('RECIPIENT_EMAIL', gmail_user).strip()
+    gmail_user     = os.environ.get('EMAIL_ADDRESS', '').strip()
+    gmail_password = os.environ.get('EMAIL_APP_PASSWORD', '').strip()
+    recipient      = os.environ.get('EMAIL_TO', gmail_user).strip()
 
     if not gmail_user or not gmail_password:
         raise ValueError("GMAIL_USER or GMAIL_APP_PASSWORD not set in secrets")
