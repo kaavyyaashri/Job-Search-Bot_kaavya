@@ -1,0 +1,30 @@
+name: Test Step 4 — Scorer
+
+on:
+  workflow_dispatch:
+    inputs:
+      country:
+        description: 'Country to test (USA / India / Singapore)'
+        required: true
+        default: 'USA'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install python-jobspy groq scikit-learn numpy python-dateutil pyyaml
+
+      - name: Test scorer
+        env:
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+        run: python src/test_scorer.py --country ${{ github.event.inputs.country }}
