@@ -86,6 +86,26 @@ def tfidf_score(jobs: list[dict], resume_text: str) -> list[dict]:
 # ─────────────────────────────────────────
 # STAGE 2 — GROQ RE-RANKING
 # ─────────────────────────────────────────
+def sanitize_text(text: str) -> str:
+    """
+    Remove characters that break JSON parsing when
+    Groq embeds them inside string responses.
+    """
+    if not text:
+        return ""
+    # Replace special quotes and dashes
+    text = text.replace('\u201c', '"').replace('\u201d', '"')  # smart quotes
+    text = text.replace('\u2018', "'").replace('\u2019', "'")  # smart apostrophes
+    text = text.replace('\u2014', '-').replace('\u2013', '-')  # em/en dash
+    text = text.replace('\u00a0', ' ')                         # non-breaking space
+    # Remove newlines and tabs inside descriptions
+    text = text.replace('\n', ' ').replace('\r', ' ').replace('\t', ' ')
+    # Collapse multiple spaces
+    text = re.sub(r'\s+', ' ', text)
+    # Remove any remaining non-ASCII characters
+    text = text.encode('ascii', 'ignore').decode('ascii')
+    return text.strip()
+
 
 def groq_rerank(top_jobs: list[dict], profile: dict) -> list[dict]:
     """
@@ -99,42 +119,47 @@ def groq_rerank(top_jobs: list[dict], profile: dict) -> list[dict]:
 
     client = Groq(api_key=api_key)
 
-    # Build a compact job list for the prompt (avoid token overflow)
+    # Build compact sanitized job list for the prompt
     job_summaries = []
     for i, job in enumerate(top_jobs, 1):
+        title       = sanitize_text(job.get('title', ''))
+        company     = sanitize_text(job.get('company', ''))
+        location    = sanitize_text(job.get('location', ''))
+        description = sanitize_text(job.get('description', ''))[:200]  # cap at 200 chars
         job_summaries.append(
-            f"{i}. Title: {job['title']} | Company: {job['company']} | "
-            f"Location: {job['location']} | "
-            f"Description: {job.get('description', '')[:200]}"
+            f"{i}. Title: {title} | Company: {company} | "
+            f"Location: {location} | Description: {description}"
         )
 
     jobs_text   = '\n'.join(job_summaries)
     skills_text = ', '.join(profile.get('skills', []))
     titles_text = ', '.join(profile.get('target_titles', []))
 
-    prompt = f"""You are a job matching expert. Given a candidate's profile and a list of job postings, rank the TOP 10 most relevant jobs.
+    prompt = f"""You are a job matching expert. Given a candidate profile and job postings, rank the TOP 10 most relevant jobs.
 
 Candidate Profile:
 - Target titles: {titles_text}
 - Skills: {skills_text}
-- Seniority: {profile.get('seniority', 'mid')}
+- Seniority: {profile.get('seniority', 'junior')}
 - Industries: {', '.join(profile.get('industries', []))}
 
 Job Postings:
 {jobs_text}
 
-Return ONLY a valid JSON array — no explanation, no markdown, no code fences.
+Return ONLY a valid JSON array. No explanation, no markdown, no code fences.
 Each item must have exactly these fields:
-{{
-  "rank": <1-10>,
-  "job_number": <the number from the list above>,
-  "match_score": <integer 0-100>,
-  "match_reason": "<one sentence why this matches>",
-  "matched_skills": ["skill1", "skill2"],
-  "missing_skills": ["skill3"]
-}}
+[
+  {{
+    "rank": 1,
+    "job_number": 1,
+    "match_score": 85,
+    "match_reason": "one sentence why this matches",
+    "matched_skills": ["skill1", "skill2"],
+    "missing_skills": ["skill3"]
+  }}
+]
 
-Return exactly 10 items ranked from best to worst match.
+Return exactly 10 items ranked best to worst. Use only ASCII characters in your response.
 """
 
     try:
@@ -143,7 +168,7 @@ Return exactly 10 items ranked from best to worst match.
             messages=[
                 {
                     "role": "system",
-                    "content": "You are a precise job matching assistant. Always return valid JSON only."
+                    "content": "You are a precise job matching assistant. Return valid JSON only. Use only ASCII characters. No markdown."
                 },
                 {
                     "role": "user",
@@ -157,11 +182,14 @@ Return exactly 10 items ranked from best to worst match.
         raw = response.choices[0].message.content.strip()
 
         # Strip markdown fences if present
-        if raw.startswith("```"):
+        if "```" in raw:
             raw = raw.split("```")[1]
             if raw.startswith("json"):
                 raw = raw[4:]
         raw = raw.strip()
+
+        # Extra safety — remove any non-ASCII that snuck through
+        raw = raw.encode('ascii', 'ignore').decode('ascii')
 
         rankings = json.loads(raw)
 
@@ -181,19 +209,28 @@ Return exactly 10 items ranked from best to worst match.
         print(f"   ✅ Groq re-ranking complete — top match score: {final_jobs[0]['match_score']}%")
         return final_jobs[:10]
 
+    except json.JSONDecodeError as e:
+        print(f"   ⚠️  Groq JSON parse error: {e}")
+        print(f"   ⚠️  Falling back to TF-IDF top 10")
+        return _tfidf_fallback(top_jobs)
+
     except Exception as e:
         print(f"   ⚠️  Groq re-ranking failed: {e} — falling back to TF-IDF top 10")
-        # Fallback — return TF-IDF top 10 with dummy score fields
-        fallback = []
-        for i, job in enumerate(top_jobs[:10], 1):
-            job_copy = job.copy()
-            job_copy['rank']           = i
-            job_copy['match_score']    = round(job.get('tfidf_score', 0) * 100)
-            job_copy['match_reason']   = 'Matched via TF-IDF keyword similarity'
-            job_copy['matched_skills'] = []
-            job_copy['missing_skills'] = []
-            fallback.append(job_copy)
-        return fallback
+        return _tfidf_fallback(top_jobs)
+
+
+def _tfidf_fallback(top_jobs: list[dict]) -> list[dict]:
+    """Return TF-IDF top 10 with normalized score fields"""
+    fallback = []
+    for i, job in enumerate(top_jobs[:10], 1):
+        job_copy = job.copy()
+        job_copy['rank']           = i
+        job_copy['match_score']    = round(job.get('tfidf_score', 0) * 100)
+        job_copy['match_reason']   = 'Matched via TF-IDF keyword similarity'
+        job_copy['matched_skills'] = []
+        job_copy['missing_skills'] = []
+        fallback.append(job_copy)
+    return fallback
 
 # ─────────────────────────────────────────
 # MAIN ENTRY POINT
