@@ -54,7 +54,8 @@ class JobSpyScraper(BaseScraper):
         # JobSpy board name mapping
         board_map = {
             "indeed":    "indeed",
-            "glassdoor": "glassdoor",
+            "linkedin":      "linkedin",
+            "zip_recruiter": "zip_recruiter",
             "naukri":    "naukri",
         }
         site_names = [board_map[b] for b in boards if b in board_map]
