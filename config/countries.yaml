@@ -5,7 +5,8 @@ countries:
     send_email_at: "08:00"
     boards:
       - indeed
-      - glassdoor
+      - linkedin
+      - zip_recruiter
     search_keywords:
       - "remote"
       - "United States"
@@ -20,6 +21,7 @@ countries:
     send_email_at: "08:00"
     boards:
       - indeed
+      - linkedin
       - naukri
     search_keywords:
       - "India"
@@ -39,7 +41,8 @@ countries:
     send_email_at: "08:00"
     boards:
       - indeed
-      - glassdoor
+      - linkedin
+      - zip_recruiter
     search_keywords:
       - "Singapore"
       - "remote"
