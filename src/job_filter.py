@@ -1,70 +1,89 @@
 import re
-
 # ─────────────────────────────────────────────────────
-# Keywords that indicate you CANNOT apply for this role
-# (work authorization restrictions)
+# Keywords that indicate you CANNOT apply
 # ─────────────────────────────────────────────────────
 EXCLUSION_KEYWORDS = [
-    # Citizenship
-    "us citizen",
-    "u.s. citizen",
-    "united states citizen",
-    "must be a citizen",
+    # Citizenship only
+    "us citizen only",
+    "u.s. citizen only",
+    "must be a us citizen",
+    "must be a u.s. citizen",
+    "united states citizen only",
     "citizenship required",
-    "american citizen",
+    "american citizen only",
 
-    # Security clearance (usually requires citizenship)
-    "security clearance",
+    # Security clearance (requires citizenship)
+    "security clearance required",
     "secret clearance",
     "top secret",
     "ts/sci",
     "dod clearance",
-    "government clearance",
+    "active clearance",
     "clearance required",
 
-    # Green card
-    "green card",
+    # Green card only
+    "green card required",
+    "green card only",
     "permanent resident only",
     "gc required",
+    "gc only",
 
-    # OPT / STEM OPT
+    # Explicitly blocks OPT
     "no opt",
     "no stem opt",
     "opt not accepted",
-    "stem opt not",
-    "cannot sponsor opt",
+    "opt not eligible",
+    "stem opt not accepted",
+    "cannot accept opt",
+    "no f-1",
+    "no f1",
 
-    # Sponsorship
-    "no sponsorship",
-    "will not sponsor",
-    "unable to sponsor",
-    "not able to sponsor",
-    "cannot sponsor",
-    "sponsorship not available",
-    "sponsorship is not available",
-    "does not offer sponsorship",
-    "no visa sponsorship",
-    "visa sponsorship not provided",
-
-    # Easy Apply (low quality listings)
+    # Easy apply — low quality listings
     "easy apply",
 ]
 
 # ─────────────────────────────────────────────────────
-# Keywords that are FINE — don't filter these out
-# even if they contain "sponsor" or similar words
+# Safe phrases — these override exclusions
+# OPT/STEM OPT friendly = good for you
+# H1B sponsorship = nice but not required
 # ─────────────────────────────────────────────────────
 SAFE_PHRASES = [
+    # OPT / STEM OPT explicitly welcome
+    "opt",
+    "stem opt",
+    "f-1",
+    "f1 visa",
+    "opt candidates",
+    "opt welcome",
+    "stem opt welcome",
+    "open to opt",
+    "accepts opt",
+    "all work authorizations",
+    "all visa types",
+    "any work authorization",
+    "authorized to work",
+    "equal opportunity",
+
+    # Sponsorship available (bonus but not required)
     "willing to sponsor",
-    "we sponsor",
     "we will sponsor",
     "sponsorship available",
     "visa sponsorship available",
-    "open to sponsoring",
     "h1b sponsor",
     "h-1b sponsor",
-]
+    "we sponsor",
+    "open to sponsoring",
 
+    # Graduate / rotational programs
+    "new grad",
+    "new graduate",
+    "rotational program",
+    "graduate program",
+    "associate program",
+    "early career",
+    "campus hire",
+    "university hire",
+]
 def _normalize(text: str) -> str:
     """Lowercase and collapse whitespace for consistent matching"""
     return re.sub(r'\s+', ' ', text.lower().strip())
