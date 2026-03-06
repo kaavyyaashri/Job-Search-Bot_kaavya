@@ -63,9 +63,13 @@
     "MS Word",
     "Google Suite"
   ],
-  "experience_years": 5,
-  "seniority": "mid",
+  "experience_years": 3,
+  "seniority": "Entry",
   "industries": [
+    "Semiconductor and Electronics",
+    "Test and Measurement Equipment",
+    "Industrial Automation and Controls",
+    "Industrial AI & Predictive Maintenance",
     "Electronics and Communication",
     "Research and Development"
   ],
