@@ -133,8 +133,7 @@ def build_html_email(jobs: list[dict], country: str) -> str:
       </div>
     </body>
     </html> """
-    
-return html
+    return html
 
 def send_email(jobs: list[dict], country: str):
     """Send the job digest email via Gmail SMTP"""
