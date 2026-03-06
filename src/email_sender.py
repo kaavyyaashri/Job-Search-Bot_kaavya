@@ -143,7 +143,7 @@ def send_email(jobs: list[dict], country: str):
     recipient      = os.environ.get('EMAIL_TO', gmail_user).strip()
 
     if not gmail_user or not gmail_password:
-        raise ValueError("GMAIL_USER or GMAIL_APP_PASSWORD not set in secrets")
+        raise ValueError("EMAIL_ADDRESS or EMAIL_APP_PASSWORD not set in secrets")
 
     today   = datetime.now().strftime("%B %d, %Y")
     subject = f"🧑‍💻 Top {len(jobs)} Job Matches — {country} | {today}"
