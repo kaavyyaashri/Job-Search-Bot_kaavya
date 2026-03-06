@@ -7,6 +7,7 @@ sys.path.insert(0, os.path.dirname(__file__))
 
 from config_loader import get_country_config
 from scraper.jobspy_scraper import JobSpyScraper
+from job_filter import filter_jobs
 from scorer import score_and_rank
 from email_sender import send_email
 
@@ -44,20 +45,39 @@ def run_pipeline(country_name: str):
 
     # ── Step 3: Scrape jobs ───────────────────────────────
     print("🔍 Step 3 — Scraping jobs...")
-    scraper  = JobSpyScraper(config)
-    jobs     = scraper.scrape()
+    scraper    = JobSpyScraper(config)
+    jobs       = scraper.scrape()
 
     if not jobs:
-        print(f"\n⚠️  No jobs found for {country_name} — skipping email.")
+        print(f"\n⚠️  No jobs scraped for {country_name} — skipping.")
         sys.exit(0)
 
-    # Convert Job dataclass to dict for scorer + email
     jobs_dicts = [vars(j) for j in jobs]
     print(f"   ✅ Total jobs scraped: {len(jobs_dicts)}\n")
 
-    # ── Step 4: Score and rank ────────────────────────────
-    print("🧠 Step 4 — Scoring and ranking jobs...")
-    top_jobs = score_and_rank(jobs_dicts)
+    # ── Step 4: Filter ineligible jobs ───────────────────  ← NEW
+    print("🚫 Step 4 — Filtering ineligible jobs...")
+    eligible, excluded = filter_jobs(jobs_dicts)
+
+    print(f"   ✅ Eligible jobs : {len(eligible)}")
+    print(f"   🚫 Excluded jobs : {len(excluded)}")
+
+    if excluded:
+        print(f"\n   Excluded because of:")
+        from collections import Counter
+        reasons = Counter(j['excluded_reason'] for j in excluded)
+        for reason, count in reasons.most_common():
+            print(f"      '{reason}' → {count} jobs removed")
+
+    if not eligible:
+        print(f"\n⚠️  All jobs were filtered out — skipping email.")
+        sys.exit(0)
+
+    print()
+
+    # ── Step 5: Score and rank ────────────────────────────
+    print("🧠 Step 5 — Scoring and ranking jobs...")
+    top_jobs = score_and_rank(eligible)
 
     if not top_jobs:
         print(f"\n⚠️  Scoring returned no results — skipping email.")
@@ -70,8 +90,8 @@ def run_pipeline(country_name: str):
             f"{job['title'][:40]:<40}  {job['company'][:25]}"
         )
 
-    # ── Step 5: Send email ────────────────────────────────
-    print(f"\n📧 Step 5 — Sending email...")
+    # ── Step 6: Send email ────────────────────────────────
+    print(f"\n📧 Step 6 — Sending email...")
     send_email(top_jobs, country_name)
 
     print(f"\n{'='*60}")
