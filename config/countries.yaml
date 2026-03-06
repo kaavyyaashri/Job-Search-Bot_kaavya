@@ -6,12 +6,10 @@ countries:
     boards:
       - indeed
       - linkedin
-      - zip_recruiter
     search_keywords:
-      - "remote"
-      - "United States"
+      - "software engineer"
+      - "backend developer"
     location_keywords:
-      - "USA"
       - "United States"
       - "Remote"
 
@@ -24,16 +22,11 @@ countries:
       - linkedin
       - naukri
     search_keywords:
-      - "India"
-      - "Bangalore"
-      - "Pune"
-      - "Hyderabad"
+      - "software engineer"
+      - "backend developer"
     location_keywords:
-      - "India"
       - "Bangalore"
       - "Mumbai"
-      - "Hyderabad"
-      - "Remote"
 
   - name: Singapore
     timezone: Asia/Singapore
@@ -42,28 +35,9 @@ countries:
     boards:
       - indeed
       - linkedin
-      - zip_recruiter
     search_keywords:
-      - "Singapore"
-      - "remote"
+      - "software engineer"
+      - "backend developer"
     location_keywords:
       - "Singapore"
       - "Remote"
-
-  # ─── ADD A NEW COUNTRY BELOW — nothing else changes ───
-  # - name: Australia
-  #   timezone: Australia/Sydney
-  #   cron_utc: "0 22 * * *"     # 8 AM AEDT = 22:00 UTC
-  #   send_email_at: "08:00"
-  #   boards:
-  #     - linkedin
-  #     - glassdoor
-  #   search_keywords:
-  #     - "Australia"
-  #     - "Sydney"
-  #     - "Melbourne"
-  #   location_keywords:
-  #     - "Australia"
-  #     - "Sydney"
-  #     - "Melbourne"
-  #     - "Remote"
