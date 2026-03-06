@@ -24,9 +24,54 @@ jobs:
       - name: Install dependencies
         run: pip install pytz
 
+      - name: Debug secrets
+        env:
+          EMAIL_ADDRESS:      ${{ secrets.EMAIL_ADDRESS }}
+          EMAIL_APP_PASSWORD: ${{ secrets.EMAIL_APP_PASSWORD }}
+          EMAIL_TO:           ${{ secrets.EMAIL_TO }}
+        run: |
+          echo "EMAIL_ADDRESS is set:      ${{ secrets.EMAIL_ADDRESS != '' }}"
+          echo "EMAIL_APP_PASSWORD is set: ${{ secrets.EMAIL_APP_PASSWORD != '' }}"
+          echo "EMAIL_TO is set:           ${{ secrets.EMAIL_TO != '' }}"
+          python -c "import os; print('EMAIL_ADDRESS in env:', bool(os.environ.get('EMAIL_ADDRESS')))"
+          python -c "import os; print('EMAIL_APP_PASSWORD in env:', bool(os.environ.get('EMAIL_APP_PASSWORD')))"
+
       - name: Send test email
         env:
-          GMAIL_USER:        ${{ secrets.EMAIL_ADDRESS }}
-          GMAIL_APP_PASSWORD: ${{ secrets.EMAIL_APP_PASSWORD }}
-          RECIPIENT_EMAIL:   ${{ secrets.EMAIL_TO }}
+          EMAIL_ADDRESS:      ${{ secrets.EMAIL_ADDRESS }}
+          EMAIL_APP_PASSWORD: ${{ secrets.EMAIL_APP_PASSWORD }}
+          EMAIL_TO:           ${{ secrets.EMAIL_TO }}
         run: python src/test_email.py --country ${{ github.event.inputs.country }}
+
+# name: Test Step 5 — Email Sender
+
+# on:
+#   workflow_dispatch:
+#     inputs:
+#       country:
+#         description: 'Country label in email (USA / India / Singapore)'
+#         required: true
+#         default: 'USA'
+
+# jobs:
+#   test:
+#     runs-on: ubuntu-latest
+
+#     steps:
+#       - name: Checkout repo
+#         uses: actions/checkout@v4
+
+#       - name: Set up Python
+#         uses: actions/setup-python@v5
+#         with:
+#           python-version: '3.11'
+
+#       - name: Install dependencies
+#         run: pip install pytz
+
+#       - name: Send test email
+#         env:
+#           GMAIL_USER:        ${{ secrets.EMAIL_ADDRESS }}
+#           GMAIL_APP_PASSWORD: ${{ secrets.EMAIL_APP_PASSWORD }}
+#           RECIPIENT_EMAIL:   ${{ secrets.EMAIL_TO }}
+#         run: python src/test_email.py --country ${{ github.event.inputs.country }}
