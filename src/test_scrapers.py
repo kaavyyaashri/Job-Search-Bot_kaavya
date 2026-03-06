@@ -26,7 +26,7 @@ def test_all(country_name: str):
             print(f"      Source      : {job.source}")
             print(f"      Posted      : {job.posted_at}")
             print(f"      Description : {job.description[:80]}...")
-            print(f"      URL         : {job.url[:80]}...")
+            print(f"      URL         : {job.url}...")
 
         print(f"\n📊 Sources breakdown:")
         sources = Counter(j.source for j in jobs)
