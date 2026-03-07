@@ -93,6 +93,10 @@ def is_job_excluded(job: dict) -> tuple[bool, str]:
     Returns (should_exclude, reason).
     Checks title + description for exclusion keywords.
     """
+        # ── Check Easy Apply field directly ──────────────────
+    if job.get('easy_apply') is True:
+        return True, "easy apply"
+    
     title       = _normalize(job.get('title', ''))
     description = _normalize(job.get('description', ''))
     combined    = f"{title} {description}"
