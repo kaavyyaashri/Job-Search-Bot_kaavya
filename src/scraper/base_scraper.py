@@ -12,6 +12,7 @@ class Job:
     url: str
     source: str
     country: str
+    easy_apply: bool = False
 
 class BaseScraper(ABC):
     def __init__(self, country_config: dict):
