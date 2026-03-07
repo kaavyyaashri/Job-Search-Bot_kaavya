@@ -120,7 +120,7 @@ class JobSpyScraper(BaseScraper):
                         description=desc,
                         url=url,
                         source=source,
-                        country=self.country
+                        country=self.country,
                         easy_apply=easy_apply
                     ))
 
