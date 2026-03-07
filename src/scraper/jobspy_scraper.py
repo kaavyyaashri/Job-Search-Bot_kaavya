@@ -107,6 +107,7 @@ class JobSpyScraper(BaseScraper):
                     desc    = str(row.get('description', '') or '')[:500]
                     url     = str(row.get('job_url',     '') or '').strip()
                     source  = str(row.get('site',        '') or 'unknown').strip()
+                    easy_apply = bool(row.get('is_easy_apply') or row.get('easy_apply') or False)
 
                     if not title or not url or url == 'nan':
                         continue
@@ -120,6 +121,7 @@ class JobSpyScraper(BaseScraper):
                         url=url,
                         source=source,
                         country=self.country
+                        easy_apply=easy_apply
                     ))
 
                 except Exception as e:
