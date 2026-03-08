@@ -14,6 +14,11 @@ def test_all(country_name: str):
     scraper = JobSpyScraper(config)
     jobs    = scraper.scrape()
 
+    # Debug — print raw JobSpy fields for first 3 jobs
+    print("\n🔍 DEBUG — Raw easy_apply field values:")
+    for job in jobs[:5]:
+        print(f"   {job.title[:40]:<40} | easy_apply: {job.easy_apply}")
+
     print(f"\n✅ Total jobs scraped: {len(jobs)}")
 
     if jobs:
