@@ -14,7 +14,7 @@ jobs:
         with:
           python-version: '3.11'
       - name: Install dependencies
-        run: pip install python-jobspy groq scikit-learn numpy python-dateutil pyyaml pytz
+        run: pip install python-jobspy groq scikit-learn numpy python-dateutil pyyaml pytz beautifulsoup4 lxml requests
       - name: Run pipeline
         env:
           GROQ_API_KEY:        ${{ secrets.GROQ_API_KEY }}
