@@ -20,7 +20,8 @@ def load_resume_titles() -> list[str]:
             profile = json.load(f)
         titles = profile.get('target_titles', [])
         print(f"   📄 Resume titles loaded: {titles}")
-        return titles[:2]           # top 2 titles to keep calls efficient
+        top_2 = titles[:2] 
+        return top_2       # top 2 titles to keep calls efficient
     except Exception as e:
         print(f"   ⚠️  Could not load resume profile: {e}")
         return ["software engineer"] # safe fallback
