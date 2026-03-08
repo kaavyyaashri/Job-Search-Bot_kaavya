@@ -160,7 +160,7 @@ def filter_jobs(jobs: list[dict]) -> tuple[list[dict], list[dict]]:
 import requests
 from bs4 import BeautifulSoup
 
-MAX_APPLICANTS = 20      # change this to 10 if you want stricter filter
+MAX_APPLICANTS = 70      # change this to 10 if you want stricter filter
 
 HEADERS = {
     "User-Agent": (
