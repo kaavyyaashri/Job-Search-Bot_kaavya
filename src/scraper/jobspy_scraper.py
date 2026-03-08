@@ -54,89 +54,88 @@ class JobSpyScraper(BaseScraper):
         print(f"   JobSpy → {len(unique_jobs)} unique jobs found for {self.country}")
         return unique_jobs
 
-    def _fetch_jobs(self, scrape_jobs, search_term: str) -> list[Job]:
-        country_name   = self.country
-        indeed_country = INDEED_COUNTRY_MAP.get(country_name, "USA")
+def _fetch_jobs(self, scrape_jobs, search_term: str) -> list[Job]:
+    country_name   = self.country
+    indeed_country = INDEED_COUNTRY_MAP.get(country_name, "USA")
+    location       = self.locations[0] if self.locations else country_name
 
-        # Use first location keyword as the location
-        location = self.locations[0] if self.locations else country_name
+    board_map = {
+        "indeed":    "indeed",
+        "linkedin":  "linkedin",
+        "glassdoor": "glassdoor",
+    }
+    site_names = [board_map[b] for b in self.country_config.get('boards', ['indeed']) if b in board_map]
 
-        board_map = {
-            "indeed":    "indeed",
-            "linkedin":  "linkedin",
-            "glassdoor": "glassdoor",
-        }
-        site_names = [board_map[b] for b in self.country_config.get('boards', ['indeed']) if b in board_map]
+    if not site_names:
+        print(f"   ⚠️  No supported boards configured for {country_name}")
+        return []
 
-        if not site_names:
-            print(f"   ⚠️  No supported boards configured for {country_name}")
+    try:
+        print(f"   🔎 Searching '{search_term}' on {site_names} in {location}...")
+
+        df = scrape_jobs(
+            site_name=site_names,
+            search_term=search_term,
+            location=location,
+            results_wanted=25,
+            hours_old=24,
+            country_indeed=indeed_country,
+            verbose=0,
+        )
+
+        if df is None or df.empty:
+            print(f"   ⚠️  No results for '{search_term}' in {location}")
             return []
 
-        try:
-            print(f"   🔎 Searching '{search_term}' on {site_names} in {location}...")
+        # ── Debug listing_type — OUTSIDE the row loop ──────
+        print(f"   📋 listing_type unique values: {df['listing_type'].dropna().unique().tolist()}")
+        print(f"   📋 Easy apply count: {df['listing_type'].str.contains('easy', case=False, na=False).sum()}")
 
-            df = scrape_jobs(
-                site_name=site_names,
-                search_term=search_term,
-                location=location,
-                results_wanted=25,
-                hours_old=24,
-                country_indeed=indeed_country,
-                verbose=0,
-            )
-
-            if df is None or df.empty:
-                print(f"   ⚠️  No results for '{search_term}' in {location}")
-                return []
-
-            jobs = []
-            for _, row in df.iterrows():
-                try:
-                    # Normalize posted date
-                    raw_date  = row.get('date_posted')
-                    if raw_date and str(raw_date) != 'nan':
-                        try:
-                            posted_at = raw_date.isoformat() if hasattr(raw_date, 'isoformat') else str(raw_date)
-                        except Exception:
-                            posted_at = datetime.now(timezone.utc).isoformat()
-                    else:
+        jobs = []
+        for _, row in df.iterrows():
+            try:
+                # Normalize posted date
+                raw_date = row.get('date_posted')
+                if raw_date and str(raw_date) != 'nan':
+                    try:
+                        posted_at = raw_date.isoformat() if hasattr(raw_date, 'isoformat') else str(raw_date)
+                    except Exception:
                         posted_at = datetime.now(timezone.utc).isoformat()
+                else:
+                    posted_at = datetime.now(timezone.utc).isoformat()
 
-                    title   = str(row.get('title',       '') or '').strip()
-                    company = str(row.get('company',     '') or 'Unknown').strip()
-                    loc_str = str(row.get('location',    '') or location).strip()
-                    desc    = str(row.get('description', '') or '')[:500]
-                    url     = str(row.get('job_url',     '') or '').strip()
-                    source  = str(row.get('site',        '') or 'unknown').strip()
-                    # easy_apply = bool(row.get('is_easy_apply') or row.get('easy_apply') or False)
-                    listing_type = str(row.get('listing_type', '') or '').lower()
-                    if df is not None and not df.empty:
-                    # Debug — show listing_type values
-                        print(f"\n   📋 listing_type values: {df['listing_type'].unique().tolist()}\n")
-                    easy_apply   = 'easy_apply' in listing_type or 'easy apply' in listing_type
-                    if easy_apply:
-                        print(f"   🚫 Easy Apply detected: {title} @ {company}")
+                title        = str(row.get('title',        '') or '').strip()
+                company      = str(row.get('company',      '') or 'Unknown').strip()
+                loc_str      = str(row.get('location',     '') or location).strip()
+                desc         = str(row.get('description',  '') or '')[:500]
+                url          = str(row.get('job_url',      '') or '').strip()
+                source       = str(row.get('site',         '') or 'unknown').strip()
+                listing_type = str(row.get('listing_type', '') or '').lower()
+                easy_apply   = 'easy_apply' in listing_type or 'easy apply' in listing_type
 
-                    if not title or not url or url == 'nan':
-                        continue
+                if easy_apply:
+                    print(f"   🚫 Easy Apply detected: {title} @ {company} | listing_type='{listing_type}'")
 
-                    jobs.append(Job(
-                        title=title,
-                        company=company,
-                        location=loc_str,
-                        posted_at=posted_at,
-                        description=desc,
-                        url=url,
-                        source=source,
-                        country=self.country,
-                        easy_apply=easy_apply
-                    ))
-
-                except Exception as e:
+                if not title or not url or url == 'nan':
                     continue
 
-            return jobs
+                jobs.append(Job(
+                    title=title,
+                    company=company,
+                    location=loc_str,
+                    posted_at=posted_at,
+                    description=desc,
+                    url=url,
+                    source=source,
+                    country=self.country,
+                    easy_apply=easy_apply
+                ))
 
-        except Exception as e:
-            print(f"   ⚠️  JobSpy error for '{search_term}' in {location}: {e}")
-            return []
+            except Exception as e:
+                continue
+
+        return jobs
+
+    except Exception as e:
+        print(f"   ⚠️  JobSpy error for '{search_term}' in {location}: {e}")
+        return []
