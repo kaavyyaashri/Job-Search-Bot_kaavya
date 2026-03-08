@@ -1,4 +1,5 @@
-"target_titles": {
+{
+      "target_titles": [
       "Product Engineer",
       "Test Engineer",
       "Validation Engineer",
@@ -23,8 +24,8 @@
       "Rotational Engineer Program",
       "Early Career Engineer",
       "New Graduate Engineer"
-  },
- "skills": {
+      ],
+ "skills": [
       "Systems Thinking",
       "Product Requirements Analysis",
       "Technical Documentation",
@@ -127,11 +128,11 @@
       "Agile",
       "IEEE Publication",
       "MS Electrical Engineering"
- },
+       ],
 
   "experience_years": 2,
   "seniority": "Entry",
-  "industries": {
+  "industries": [
       "Semiconductor and Electronic Components",
       "Test and Measurement Equipment",
       "Embedded Systems and IoT",
@@ -145,7 +146,7 @@
       "Consumer Electronics",
       "Manufacturing and Process Industry",
       "Research and Development"
-  },
+        ],
   "education": "Master of Science in Electrical Engineering",
   "summary": "Electrical Engineer with experience supporting product bring-up, validation, and lifecycle improvement across hardware\u2013software systems. Executed structured debugging and corrective actions in testing environments, reducing rework and strengthening product reliability."
   "avoid_titles": [
