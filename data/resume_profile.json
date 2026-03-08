@@ -40,8 +40,8 @@ target_titles": {
       "Debugging and Troubleshooting",
       "Lean Six Sigma",
       "Agile Methodology",
-      "Report Writing"
-#-------------------------------
+      "Report Writing",
+      #-------------------------------
       "Predictive Maintenance",
       "Condition Monitoring",
       "Anomaly Detection",
@@ -59,7 +59,7 @@ target_titles": {
       "Prompt Engineering",
       "Industry 4.0",
       "IIoT",
-   #-------------------------
+      #-------------------------
       "Python",
       "C",
       "Bash",
@@ -73,7 +73,7 @@ target_titles": {
       "Streamlit",
       "Statistical Analysis",
       "Data Visualization",
-   #-----------------------------
+      #-----------------------------
       "Embedded Systems",
       "Arduino",
       "FPGA",
@@ -86,7 +86,7 @@ target_titles": {
       "PCB Soldering",
       "Sensor Integration",
       "Hardware Debugging",
-#----------------------------
+      #----------------------------
       "Linux",
       "SLURM",
       "HPC Clusters",
@@ -95,7 +95,7 @@ target_titles": {
       "GPU Acceleration",
       "Parallel Computing",
       "System Performance Analysis",
-   #--------------------------------
+      #--------------------------------
       "Git",
       "GitHub",
       "Jupyter Notebook",
@@ -106,7 +106,7 @@ target_titles": {
       "MS Outlook",
       "Google Suite",
       "Slack",
-  #---------------------------
+      #---------------------------
       "Product Engineer",
       "Test Engineer",
       "Validation Engineer",
