@@ -148,4 +148,12 @@
   },
   "education": "Master of Science in Electrical Engineering",
   "summary": "Electrical Engineer with experience supporting product bring-up, validation, and lifecycle improvement across hardware\u2013software systems. Executed structured debugging and corrective actions in testing environments, reducing rework and strengthening product reliability."
-}
+  "avoid_titles": [
+    "Senior Engineer",
+    "Lead Engineer",
+    "Principal Engineer",
+    "Staff Engineer",
+    "Manager",
+    "Director"
+  ]
+  }
