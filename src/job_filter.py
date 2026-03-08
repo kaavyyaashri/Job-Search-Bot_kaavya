@@ -150,3 +150,111 @@ def filter_jobs(jobs: list[dict]) -> tuple[list[dict], list[dict]]:
             eligible.append(job)
 
     return eligible, excluded
+
+# ─────────────────────────────────────────────────────
+# APPLICANT COUNT FILTER
+# Runs AFTER scoring — checks only top 10 job pages
+# Best effort — skips jobs where count cannot be found
+# ─────────────────────────────────────────────────────
+
+import requests
+from bs4 import BeautifulSoup
+
+MAX_APPLICANTS = 20      # change this to 10 if you want stricter filter
+
+HEADERS = {
+    "User-Agent": (
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+        "AppleWebKit/537.36 (KHTML, like Gecko) "
+        "Chrome/120.0.0.0 Safari/537.36"
+    ),
+    "Accept-Language": "en-US,en;q=0.9",
+}
+
+def _get_applicant_count(url: str, source: str) -> int | None:
+    """
+    Try to extract applicant count from job page.
+    Returns count if found, None if not found or blocked.
+    """
+    try:
+        response = requests.get(url, headers=HEADERS, timeout=10)
+
+        if response.status_code != 200:
+            return None
+
+        soup = BeautifulSoup(response.text, 'lxml')
+        text = soup.get_text(separator=' ').lower()
+
+        # ── LinkedIn patterns ─────────────────────────────
+        # "23 applicants", "over 200 applicants", "47 people clicked apply"
+        linkedin_patterns = [
+            r'(\d+)\s+applicants?',
+            r'over\s+(\d+)\s+applicants?',
+            r'(\d+)\s+people\s+clicked\s+apply',
+            r'(\d+)\s+people\s+applied',
+        ]
+
+        # ── Indeed patterns ───────────────────────────────
+        # "47 applied", "over 200 applied", "1,234 applied"
+        indeed_patterns = [
+            r'([\d,]+)\s+applied',
+            r'over\s+([\d,]+)\s+applied',
+            r'(\d+)\s+candidates',
+        ]
+
+        patterns = linkedin_patterns if 'linkedin' in source else indeed_patterns
+
+        for pattern in patterns:
+            match = re.search(pattern, text)
+            if match:
+                count_str = match.group(1).replace(',', '')
+                return int(count_str)
+
+        return None     # count not found on page
+
+    except Exception:
+        return None     # any error = skip filter for this job
+
+
+def filter_by_applicants(
+    jobs: list[dict],
+    max_applicants: int = MAX_APPLICANTS
+) -> list[dict]:
+    """
+    Check applicant count for each job.
+    Removes jobs with more than max_applicants.
+    Jobs where count cannot be found are KEPT (benefit of doubt).
+    """
+    print(f"\n👥 Checking applicant counts (max allowed: {max_applicants})...")
+
+    kept     = []
+    removed  = []
+
+    for job in jobs:
+        url    = job.get('url', '')
+        source = job.get('source', '')
+        title  = job.get('title', '')
+        company= job.get('company', '')
+
+        count = _get_applicant_count(url, source)
+
+        if count is None:
+            # Could not fetch count — keep the job
+            print(f"   ⚪ Count unknown  : {title} @ {company} — keeping")
+            job['applicant_count'] = None
+            kept.append(job)
+
+        elif count <= max_applicants:
+            print(f"   ✅ {count:>4} applicants: {title} @ {company}")
+            job['applicant_count'] = count
+            kept.append(job)
+
+        else:
+            print(f"   🚫 {count:>4} applicants: {title} @ {company} — removed")
+            job['applicant_count'] = count
+            removed.append(job)
+
+    print(f"\n   ✅ Kept    : {len(kept)} jobs")
+    print(f"   🚫 Removed : {len(removed)} jobs (>{max_applicants} applicants)\n")
+
+    return kept
