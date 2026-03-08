@@ -51,10 +51,7 @@ EXCLUSION_KEYWORDS = [
     "stem opt not accepted",
     "cannot accept opt",
     "no f-1",
-    "no f1",
-
-    # Easy apply — low quality listings
-    "easy apply",
+    "no f1"
 ]
 
 # ─────────────────────────────────────────────────────
@@ -115,6 +112,12 @@ def is_job_excluded(job: dict) -> tuple[bool, str]:
     title       = _normalize(job.get('title', ''))
     description = _normalize(job.get('description', ''))
     combined    = f"{title} {description}"
+
+     # ── Check avoid_titles against job title ─────────────
+    avoid_titles = load_avoid_titles()
+    for avoid in avoid_titles:
+        if avoid in title:
+            return True, f"avoid title: {avoid}"
 
     # Check if any safe phrase is present first
     for safe in SAFE_PHRASES:
