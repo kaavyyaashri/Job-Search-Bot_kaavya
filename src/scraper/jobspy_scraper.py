@@ -70,8 +70,6 @@ class JobSpyScraper(BaseScraper):
         if not site_names:
             print(f"   ⚠️  No supported boards configured for {country_name}")
             return []
-        # DEBUG — print column names once
-        print(f"\n   📋 JobSpy columns: {list(df.columns)}\n")
 
         try:
             print(f"   🔎 Searching '{search_term}' on {site_names} in {location}...")
@@ -89,6 +87,8 @@ class JobSpyScraper(BaseScraper):
             if df is None or df.empty:
                 print(f"   ⚠️  No results for '{search_term}' in {location}")
                 return []
+             # DEBUG — print column names once
+            print(f"\n   📋 JobSpy columns: {list(df.columns)}\n")
 
             jobs = []
             for _, row in df.iterrows():
