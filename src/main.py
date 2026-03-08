@@ -9,6 +9,7 @@ from config_loader import get_country_config
 from scraper.jobspy_scraper import JobSpyScraper
 from job_filter import filter_jobs
 from scorer import score_and_rank
+from job_filter import filter_jobs, filter_by_applicants 
 from email_sender import send_email
 
 RESUME_PROFILE_PATH = os.path.join(
@@ -74,21 +75,29 @@ def run_pipeline(country_name: str):
         sys.exit(0)
 
     print()
-
-    # ── Step 5: Score and rank ────────────────────────────
+    
+    # ── Step 5: Score and rank ─────────────────────────────
     print("🧠 Step 5 — Scoring and ranking jobs...")
     top_jobs = score_and_rank(eligible)
-
+    
     if not top_jobs:
         print(f"\n⚠️  Scoring returned no results — skipping email.")
         sys.exit(0)
-
+    
     print(f"\n   🏆 Top {len(top_jobs)} jobs selected:\n")
     for job in top_jobs:
         print(
             f"   #{job.get('rank', '?'):>2}  {job.get('match_score', 0):>3}%  "
             f"{job['title'][:40]:<40}  {job['company'][:25]}"
         )
+    
+    # ── Step 5b: Filter by applicant count ────────────────  ← NEW
+    print("\n👥 Step 5b — Checking applicant counts...")
+    top_jobs = filter_by_applicants(top_jobs, max_applicants=20)
+    
+    if not top_jobs:
+        print(f"\n⚠️  All jobs had too many applicants — skipping email.")
+        sys.exit(0)
 
     # ── Step 6: Send email ────────────────────────────────
     print(f"\n📧 Step 6 — Sending email...")
