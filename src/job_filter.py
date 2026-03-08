@@ -114,12 +114,12 @@ def is_job_excluded(job: dict) -> tuple[bool, str]:
     combined    = f"{title} {description}"
 
      # ── Check avoid_titles against job title ─────────────
-avoid_titles = load_avoid_titles()
-for avoid in avoid_titles:
-    # Use word boundary to avoid false matches
-    pattern = r'\b' + re.escape(avoid) + r'\b'
-    if re.search(pattern, title):
-        return True, f"avoid title: {avoid}"
+    avoid_titles = load_avoid_titles()
+    for avoid in avoid_titles:
+        # Use word boundary to avoid false matches
+        pattern = r'\b' + re.escape(avoid) + r'\b'
+        if re.search(pattern, title):
+            return True, f"avoid title: {avoid}"
 
     # Check if any safe phrase is present first
     for safe in SAFE_PHRASES:
