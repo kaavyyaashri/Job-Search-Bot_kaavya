@@ -109,6 +109,9 @@ class JobSpyScraper(BaseScraper):
                     source  = str(row.get('site',        '') or 'unknown').strip()
                     # easy_apply = bool(row.get('is_easy_apply') or row.get('easy_apply') or False)
                     listing_type = str(row.get('listing_type', '') or '').lower()
+                    if df is not None and not df.empty:
+                    # Debug — show listing_type values
+                        print(f"\n   📋 listing_type values: {df['listing_type'].unique().tolist()}\n")
                     easy_apply   = 'easy_apply' in listing_type or 'easy apply' in listing_type
                     if easy_apply:
                         print(f"   🚫 Easy Apply detected: {title} @ {company}")
