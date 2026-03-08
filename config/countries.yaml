@@ -7,8 +7,14 @@ countries:
       - indeed
       - linkedin
     search_keywords:
-      - "software engineer"
-      - "backend developer"
+      - "Product Engineer entry level"
+      - "Test Engineer entry level"
+      - "Validation Engineer new graduate"
+      - "Hardware Validation Engineer"
+      - "Graduate Engineer Program"
+      - "Early Career Engineer semiconductor"
+      - "Rotational Program Engineer"
+      - "Associate Engineer semiconductor"
     location_keywords:
       - "United States"
       - "Remote"
@@ -22,11 +28,16 @@ countries:
       - linkedin
       - naukri
     search_keywords:
-      - "software engineer"
-      - "backend developer"
+      - "Product Engineer entry level"
+      - "Test Engineer embedded"
+      - "Validation Engineer semiconductor"
+      - "Graduate Engineer Trainee electronics"
+      - "Associate Engineer semiconductor"
+      - "Embedded Systems Engineer"
     location_keywords:
       - "Bangalore"
-      - "Mumbai"
+      - "Hyderabad"
+      - "Pune"
 
   - name: Singapore
     timezone: Asia/Singapore
@@ -36,8 +47,11 @@ countries:
       - indeed
       - linkedin
     search_keywords:
-      - "software engineer"
-      - "backend developer"
+      - "Product Engineer semiconductor"
+      - "Test Engineer electronics"
+      - "Validation Engineer"
+      - "Associate Engineer semiconductor"
+      - "Embedded Systems Engineer"
     location_keywords:
       - "Singapore"
       - "Remote"
