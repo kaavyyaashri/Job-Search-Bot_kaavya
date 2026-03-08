@@ -226,12 +226,10 @@ That's it. The entire bot is driven by this config file — no other code change
 
 ## 🔮 What I Plan to Add Next
 
-- Smarter Job Filtering (Work Authorization) 
 - Deduplicate jobs across days so you don't see the same posting twice
 - Remote-only filter toggle in the config
 - Salary range filter
 - Weekly digest summary option
-- Groq Re-ranking Fails on Special Characters
   
 
 ---
