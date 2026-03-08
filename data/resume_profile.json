@@ -90,11 +90,15 @@
   "education": "Master of Science in Electrical Engineering, Texas State University",
   "summary": "Entry-level Electrical Engineer with 2 years of experience in product validation, PCB testing, and embedded systems. MS in Electrical Engineering from Texas State University with IEEE publication. Seeking Product Engineering, Test Engineering, or Validation Engineering roles in semiconductor or industrial automation. Authorized to work in the US on F1 STEM OPT.",
   "avoid_titles": [
+    "Senior",
     "Senior Engineer",
     "Lead Engineer",
     "Principal Engineer",
     "Staff Engineer",
     "Manager",
-    "Director"
+    "Director",
+    "vp ",
+    "vice president",
+    "head of"
   ]
 }
