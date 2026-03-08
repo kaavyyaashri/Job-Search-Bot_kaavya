@@ -11,7 +11,7 @@ def load_avoid_titles() -> list[str]:
     try:
         with open(RESUME_PROFILE_PATH, 'r') as f:
             profile = json.load(f)
-        return [t.lower() for t in profile.get('avoid_titles', [])]
+        return [t.lower().strip() for t in profile.get('avoid_titles', [])]
     except Exception:
         return []
 # ─────────────────────────────────────────────────────
