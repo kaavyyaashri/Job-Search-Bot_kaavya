@@ -87,8 +87,6 @@ class JobSpyScraper(BaseScraper):
             if df is None or df.empty:
                 print(f"   ⚠️  No results for '{search_term}' in {location}")
                 return []
-             # DEBUG — print column names once
-            print(f"\n   📋 JobSpy columns: {list(df.columns)}\n")
 
             jobs = []
             for _, row in df.iterrows():
@@ -109,7 +107,11 @@ class JobSpyScraper(BaseScraper):
                     desc    = str(row.get('description', '') or '')[:500]
                     url     = str(row.get('job_url',     '') or '').strip()
                     source  = str(row.get('site',        '') or 'unknown').strip()
-                    easy_apply = bool(row.get('is_easy_apply') or row.get('easy_apply') or False)
+                    # easy_apply = bool(row.get('is_easy_apply') or row.get('easy_apply') or False)
+                    listing_type = str(row.get('listing_type', '') or '').lower()
+                    easy_apply   = 'easy_apply' in listing_type or 'easy apply' in listing_type
+                    if easy_apply:
+                        print(f"   🚫 Easy Apply detected: {title} @ {company}")
 
                     if not title or not url or url == 'nan':
                         continue
