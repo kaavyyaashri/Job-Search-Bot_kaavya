@@ -1,4 +1,19 @@
 import re
+import json
+import os
+
+RESUME_PROFILE_PATH = os.path.join(
+    os.path.dirname(__file__), '..', 'data', 'resume_profile.json'
+)
+
+def load_avoid_titles() -> list[str]:
+    """Load titles to avoid from resume_profile.json"""
+    try:
+        with open(RESUME_PROFILE_PATH, 'r') as f:
+            profile = json.load(f)
+        return [t.lower() for t in profile.get('avoid_titles', [])]
+    except Exception:
+        return []
 # ─────────────────────────────────────────────────────
 # Keywords that indicate you CANNOT apply
 # ─────────────────────────────────────────────────────
