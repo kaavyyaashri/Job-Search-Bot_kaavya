@@ -6,6 +6,7 @@ countries:
     boards:
       - indeed
       - linkedin
+      - google jobs
     search_keywords:
       - "Product Engineer entry level"
       - "Test Engineer entry level"
@@ -27,13 +28,12 @@ countries:
       - indeed
       - linkedin
       - naukri
+      - google jobs
     search_keywords:
       - "Product Engineer entry level"
       - "Test Engineer embedded"
       - "Validation Engineer semiconductor"
       - "Graduate Engineer Trainee electronics"
-      - "Associate Engineer semiconductor"
-      - "Embedded Systems Engineer"
     location_keywords:
       - "Bangalore"
       - "Hyderabad"
@@ -46,12 +46,28 @@ countries:
     boards:
       - indeed
       - linkedin
+      - google jobs
     search_keywords:
       - "Product Engineer semiconductor"
       - "Test Engineer electronics"
       - "Validation Engineer"
-      - "Associate Engineer semiconductor"
-      - "Embedded Systems Engineer"
     location_keywords:
       - "Singapore"
       - "Remote"
+
+  - name: Ireland
+    timezone: Europe/Dublin
+    cron_utc: "0 8 * * *"       # 8 AM GMT = 08:00 UTC
+    send_email_at: "08:00"
+    boards:
+      - indeed
+      - linkedin
+    search_keywords:
+      - "Product Engineer semiconductor"
+      - "Test Engineer electronics"
+      - "Validation Engineer"
+    location_keywords:
+      - "Ireland"
+      - "Remote"
+
+      
