@@ -6,7 +6,7 @@ countries:
     boards:
       - indeed
       - linkedin
-      - google jobs
+      - google
     search_keywords:
       - "Product Engineer entry level"
       - "Test Engineer entry level"
@@ -28,7 +28,7 @@ countries:
       - indeed
       - linkedin
       - naukri
-      - google jobs
+      - google
     search_keywords:
       - "Product Engineer entry level"
       - "Test Engineer embedded"
@@ -46,7 +46,7 @@ countries:
     boards:
       - indeed
       - linkedin
-      - google jobs
+      - google
     search_keywords:
       - "Product Engineer semiconductor"
       - "Test Engineer electronics"
@@ -62,6 +62,7 @@ countries:
     boards:
       - indeed
       - linkedin
+      - google
     search_keywords:
       - "Product Engineer semiconductor"
       - "Test Engineer electronics"
