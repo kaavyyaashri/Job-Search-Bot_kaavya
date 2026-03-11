@@ -7,6 +7,7 @@ INDEED_COUNTRY_MAP = {
     "USA":       "USA",
     "India":     "India",
     "Singapore": "Singapore",
+    "Ireland": "Ireland",
 }
 
 RESUME_PROFILE_PATH = os.path.join(
@@ -62,7 +63,7 @@ class JobSpyScraper(BaseScraper):
         board_map = {
             "indeed":    "indeed",
             "linkedin":  "linkedin",
-            "glassdoor": "glassdoor",
+            "google": "google",
         }
         site_names = [
             board_map[b]
