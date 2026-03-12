@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import datetime
 
 @dataclass
@@ -15,7 +15,7 @@ class Job:
     easy_apply: bool = False
 
 class BaseScraper(ABC):
-    def __init__(self, country_config: dict):
+    def __init__(self, country_config: dict,country_name: str):
         self.country        = country_config['name']
         self.keywords       = country_config['search_keywords']
         self.locations      = country_config['location_keywords']
