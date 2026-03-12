@@ -62,7 +62,15 @@ def run_pipeline(country_name: str):
             seen.add(url)
             unique.append(job)
 
+    jobs_dicts = [vars(j) for j in unique]
+    print(f"   ✅ Total jobs scraped: {len(jobs_dicts)}\n")
+
+    if not jobs_dicts:
+        print(f"\n⚠️  No jobs scraped for {country_name} — skipping.")
+        sys.exit(0)
+
     print(f"   ✅ Total jobs scraped: {len(unique)}")
+    
     # print("🔍 Step 3 — Scraping jobs...")
     # scraper    = JobSpyScraper(config)
     # jobs       = scraper.scrape()
