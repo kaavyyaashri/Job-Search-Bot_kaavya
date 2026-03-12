@@ -8,7 +8,6 @@
 
 from .base_scraper import BaseScraper, Job
 from .jobspy_scraper import JobSpyScraper
-
 from .jsearch_scraper import JSearchScraper
 
 def get_scraper(country_config: dict, country_name: str):
