@@ -21,4 +21,5 @@ jobs:
           EMAIL_ADDRESS:       ${{ secrets.EMAIL_ADDRESS }}
           EMAIL_APP_PASSWORD:  ${{ secrets.EMAIL_APP_PASSWORD }}
           EMAIL_TO:            ${{ secrets.EMAIL_TO }}
+          RAPIDAPI_KEY:        ${{ secrets.RAPIDAPI_KEY }}
         run: python src/main.py --country India
