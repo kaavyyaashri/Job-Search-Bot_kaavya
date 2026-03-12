@@ -16,7 +16,7 @@ class Job:
 
 class BaseScraper(ABC):
     def __init__(self, country_config: dict,country_name: str):
-        self.country        = country_config['name']
+        self.country        = country_config
         self.keywords       = country_config['search_keywords']
         self.locations      = country_config['location_keywords']
         self.country_config = country_config          # ← store full config
