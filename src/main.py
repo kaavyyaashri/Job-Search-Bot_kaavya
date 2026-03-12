@@ -62,7 +62,7 @@ def run_pipeline(country_name: str):
             seen.add(url)
             unique.append(job)
 
-print(f"   ✅ Total jobs scraped: {len(unique)}")
+    print(f"   ✅ Total jobs scraped: {len(unique)}")
     # print("🔍 Step 3 — Scraping jobs...")
     # scraper    = JobSpyScraper(config)
     # jobs       = scraper.scrape()
