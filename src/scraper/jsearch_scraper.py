@@ -9,6 +9,7 @@ COUNTRY_FILTER = {
     "USA":       "us",
     "India":     "in",
     "Singapore": "sg",
+    "Ireland":    "ie",
 }
 
 class JSearchScraper(BaseScraper):
