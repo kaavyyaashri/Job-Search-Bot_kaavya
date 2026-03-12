@@ -46,7 +46,7 @@ def run_pipeline(country_name: str):
 
     # ── Step 3: Scrape jobs ───────────────────────────────
     print("🔍 Step 3 — Scraping jobs...")
-    scrapers  = get_scraper(country_config, country_name)
+    scrapers  = get_scraper(get_country_config, country_name)
     all_jobs  = []
     
     for scraper in scrapers:
