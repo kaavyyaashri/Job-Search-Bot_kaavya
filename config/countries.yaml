@@ -64,11 +64,12 @@ countries:
       - linkedin
       - google
     search_keywords:
-      - "Product Engineer semiconductor"
-      - "Test Engineer electronics"
+      - "Product Engineer entry level"
+      - "Test Engineer entry level"
       - "Validation Engineer"
+      - "Graduate Engineer Programme"
     location_keywords:
+      - "Dublin"
+      - "Cork"
       - "Ireland"
-      - "Remote"
 
-      
