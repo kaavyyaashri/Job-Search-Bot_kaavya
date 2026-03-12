@@ -6,7 +6,7 @@ import sys
 sys.path.insert(0, os.path.dirname(__file__))
 
 from config_loader import get_country_config
-from scraper.jobspy_scraper import JobSpyScraper
+from scraper import get_scraper
 from job_filter import filter_jobs
 from scorer import score_and_rank
 from job_filter import filter_jobs #, filter_by_applicants 
@@ -46,15 +46,34 @@ def run_pipeline(country_name: str):
 
     # ── Step 3: Scrape jobs ───────────────────────────────
     print("🔍 Step 3 — Scraping jobs...")
-    scraper    = JobSpyScraper(config)
-    jobs       = scraper.scrape()
+    scrapers  = get_scraper(country_config, country_name)
+    all_jobs  = []
+    
+    for scraper in scrapers:
+        jobs = scraper.scrape()
+        all_jobs.extend(jobs)
+    
+    # Deduplicate across scrapers by URL
+    seen       = set()
+    unique     = []
+    for job in all_jobs:
+        url = job.url if hasattr(job, 'url') else job.get('url', '')
+        if url not in seen:
+            seen.add(url)
+            unique.append(job)
 
-    if not jobs:
-        print(f"\n⚠️  No jobs scraped for {country_name} — skipping.")
-        sys.exit(0)
+print(f"   ✅ Total jobs scraped: {len(unique)}")
+    # print("🔍 Step 3 — Scraping jobs...")
+    # scraper    = JobSpyScraper(config)
+    # jobs       = scraper.scrape()
 
-    jobs_dicts = [vars(j) for j in jobs]
-    print(f"   ✅ Total jobs scraped: {len(jobs_dicts)}\n")
+    # if not jobs:
+    #     print(f"\n⚠️  No jobs scraped for {country_name} — skipping.")
+    #     sys.exit(0)
+
+    # jobs_dicts = [vars(j) for j in jobs]
+    # print(f"   ✅ Total jobs scraped: {len(jobs_dicts)}\n")
+    
 
     # ── Step 4: Filter ineligible jobs ───────────────────  ← NEW
     print("🚫 Step 4 — Filtering ineligible jobs...")
