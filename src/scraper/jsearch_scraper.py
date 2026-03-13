@@ -12,6 +12,14 @@ COUNTRY_FILTER = {
     "Ireland":    "ie",
 }
 
+def load_resume_titles() -> list[str]:
+    try:
+        with open(RESUME_PROFILE_PATH, 'r') as f:
+            profile = json.load(f)
+        return profile.get('target_titles', [])[:2]
+    except Exception:
+        return ["product engineer", "test engineer"]
+        
 class JSearchScraper(BaseScraper):
 
     def scrape(self) -> list[Job]:
@@ -20,8 +28,7 @@ class JSearchScraper(BaseScraper):
             print("   ⚠️  RAPIDAPI_KEY not set — skipping JSearch")
             return []
 
-        from data_loader import load_resume_titles_flat
-        search_terms = load_resume_titles_flat()[:2]
+        search_terms = load_resume_titles()[:2]
 
         all_jobs = []
         for term in search_terms:
