@@ -7,7 +7,6 @@ sys.path.insert(0, os.path.dirname(__file__))
 
 from config_loader import get_country_config
 from scraper import get_scraper
-from job_filter import filter_jobs
 from scorer import score_and_rank
 from job_filter import filter_jobs #, filter_by_applicants 
 from email_sender import send_email
