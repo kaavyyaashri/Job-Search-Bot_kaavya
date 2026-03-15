@@ -135,17 +135,32 @@ def groq_rerank(top_jobs: list[dict], profile: dict) -> list[dict]:
     skills_text = ', '.join(profile.get('skills', []))
     titles_text = ', '.join(profile.get('target_titles', []))
 
-    prompt = f"""You are a job matching expert. Given a candidate profile and job postings, rank the TOP 10 most relevant jobs.
-
-Candidate Profile:
-- Target titles: {titles_text}
-- Skills: {skills_text}
-- Seniority: {profile.get('seniority', 'junior')}
-- Industries: {', '.join(profile.get('industries', []))}
-
+   prompt = f"""You are a job matching expert for an entry-level candidate. Your job is to find the most relevant postings from the list below.
+ 
+CANDIDATE BACKGROUND:
+- Degree: MS Electrical Engineering, Texas State University
+- Experience: 2 years total — PCB testing and validation at an electronics company, HPC cluster administration using SLURM, deep learning model development for IEEE-published research
+- Work authorization: F1 STEM OPT (can work in the US without sponsorship for 2 years)
+- Seniority: Entry-level only
+ 
+WHAT THIS CANDIDATE IS LOOKING FOR (in priority order):
+1. Product Engineering, Test Engineering, Validation Engineering — hardware bring-up, PCB testing, embedded systems validation, product lifecycle, semiconductor or electronics companies
+2. Industrial AI roles — applying AI/ML to physical systems: predictive maintenance, manufacturing quality, computer vision for inspection, condition monitoring, industrial automation
+3. New Graduate Programs and Rotational Engineer Programs — any company running structured new grad or rotational programs for engineers
+4. HPC or ML Engineering roles — only when connected to products, infrastructure, or research (not pure software development)
+ 
+HARD EXCLUDE — do not include in your rankings even if skills match:
+- Any role that is senior, lead, principal, staff, manager, or director level
+- Pure software engineering, devops, site reliability, network engineering, security engineering
+- Power systems, transmission, substation, civil, or mechanical engineering
+- Roles requiring security clearance or US citizenship
+ 
+Candidate skills: {skills_text}
+Target titles: {titles_text}
+ 
 Job Postings:
 {jobs_text}
-
+ 
 Return ONLY a valid JSON array. No explanation, no markdown, no code fences.
 Each item must have exactly these fields:
 [
@@ -153,12 +168,12 @@ Each item must have exactly these fields:
     "rank": 1,
     "job_number": 1,
     "match_score": 85,
-    "match_reason": "one sentence why this matches",
+    "match_reason": "one sentence explaining why this fits the candidate's interests",
     "matched_skills": ["skill1", "skill2"],
     "missing_skills": ["skill3"]
   }}
 ]
-
+ 
 Return exactly 10 items ranked best to worst. Use only ASCII characters in your response.
 """
 
