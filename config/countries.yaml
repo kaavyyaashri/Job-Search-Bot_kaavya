@@ -7,15 +7,15 @@ countries:
       - indeed
       - linkedin
       - google
-    search_keywords:
-      - "Product Engineer entry level"
-      - "Test Engineer entry level"
-      - "Validation Engineer new graduate"
-      - "Hardware Validation Engineer"
-      - "Graduate Engineer Program"
-      - "Early Career Engineer semiconductor"
-      - "Rotational Program Engineer"
-      - "Associate Engineer semiconductor"
+  search_keywords:
+    - "product engineer entry level"
+    - "test engineer hardware new graduate"
+    - "validation engineer semiconductor"
+    - "industrial AI engineer entry level"
+    - "machine learning engineer manufacturing"
+    - "new graduate engineer program"
+    - "rotational engineer program"
+    - "early career engineer electronics"
     location_keywords:
       - "United States"
       - "Remote"
@@ -29,11 +29,15 @@ countries:
       - linkedin
       - naukri
       - google
-    search_keywords:
-      - "Product Engineer entry level"
-      - "Test Engineer embedded"
-      - "Validation Engineer semiconductor"
-      - "Graduate Engineer Trainee electronics"
+  search_keywords:
+    - "product engineer entry level"
+    - "test engineer hardware new graduate"
+    - "validation engineer semiconductor"
+    - "industrial AI engineer entry level"
+    - "machine learning engineer manufacturing"
+    - "new graduate engineer program"
+    - "rotational engineer program"
+    - "early career engineer electronics"
     location_keywords:
       - "Bangalore"
       - "Hyderabad"
@@ -47,10 +51,15 @@ countries:
       - indeed
       - linkedin
       - google
-    search_keywords:
-      - "Product Engineer semiconductor"
-      - "Test Engineer electronics"
-      - "Validation Engineer"
+  search_keywords:
+    - "product engineer entry level"
+    - "test engineer hardware new graduate"
+    - "validation engineer semiconductor"
+    - "industrial AI engineer entry level"
+    - "machine learning engineer manufacturing"
+    - "new graduate engineer program"
+    - "rotational engineer program"
+    - "early career engineer electronics"
     location_keywords:
       - "Singapore"
       - "Remote"
@@ -63,11 +72,15 @@ countries:
       - indeed
       - linkedin
       - google
-    search_keywords:
-      - "Product Engineer entry level"
-      - "Test Engineer entry level"
-      - "Validation Engineer"
-      - "Graduate Engineer Programme"
+  search_keywords:
+    - "product engineer entry level"
+    - "test engineer hardware new graduate"
+    - "validation engineer semiconductor"
+    - "industrial AI engineer entry level"
+    - "machine learning engineer manufacturing"
+    - "new graduate engineer programme"
+    - "rotational engineer programme"
+    - "early career engineer electronics"
     location_keywords:
       - "Dublin"
       - "Cork"
