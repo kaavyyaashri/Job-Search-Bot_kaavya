@@ -135,7 +135,7 @@ def groq_rerank(top_jobs: list[dict], profile: dict) -> list[dict]:
     skills_text = ', '.join(profile.get('skills', []))
     titles_text = ', '.join(profile.get('target_titles', []))
 
-   prompt = f"""You are a job matching expert for an entry-level candidate. Your job is to find the most relevant postings from the list below.
+    prompt = f"""You are a job matching expert for an entry-level candidate. Your job is to find the most relevant postings from the list below.
     CANDIDATE BACKGROUND:
     - Degree: MS Electrical Engineering, Texas State University
     - Experience: 2 years total — PCB testing and validation at an electronics company, HPC cluster administration using SLURM, deep learning model development for IEEE-published research
