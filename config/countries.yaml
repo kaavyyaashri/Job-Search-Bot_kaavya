@@ -7,15 +7,15 @@ countries:
       - indeed
       - linkedin
       - google
-  search_keywords:
-    - "product engineer entry level"
-    - "test engineer hardware new graduate"
-    - "validation engineer semiconductor"
-    - "industrial AI engineer entry level"
-    - "machine learning engineer manufacturing"
-    - "new graduate engineer program"
-    - "rotational engineer program"
-    - "early career engineer electronics"
+    search_keywords:
+      - "product engineer entry level"
+      - "test engineer hardware new graduate"
+      - "validation engineer semiconductor"
+      - "industrial AI engineer entry level"
+      - "machine learning engineer manufacturing"
+      - "new graduate engineer program"
+      - "rotational engineer program"
+      - "early career engineer electronics"
     location_keywords:
       - "United States"
       - "Remote"
@@ -51,15 +51,15 @@ countries:
       - indeed
       - linkedin
       - google
-  search_keywords:
-    - "product engineer entry level"
-    - "test engineer hardware new graduate"
-    - "validation engineer semiconductor"
-    - "industrial AI engineer entry level"
-    - "machine learning engineer manufacturing"
-    - "new graduate engineer program"
-    - "rotational engineer program"
-    - "early career engineer electronics"
+    search_keywords:
+      - "product engineer entry level"
+      - "test engineer hardware new graduate"
+      - "validation engineer semiconductor"
+      - "industrial AI engineer entry level"
+      - "machine learning engineer manufacturing"
+      - "new graduate engineer program"
+      - "rotational engineer program"
+      - "early career engineer electronics"
     location_keywords:
       - "Singapore"
       - "Remote"
@@ -72,15 +72,15 @@ countries:
       - indeed
       - linkedin
       - google
-  search_keywords:
-    - "product engineer entry level"
-    - "test engineer hardware new graduate"
-    - "validation engineer semiconductor"
-    - "industrial AI engineer entry level"
-    - "machine learning engineer manufacturing"
-    - "new graduate engineer programme"
-    - "rotational engineer programme"
-    - "early career engineer electronics"
+    search_keywords:
+      - "product engineer entry level"
+      - "test engineer hardware new graduate"
+      - "validation engineer semiconductor"
+      - "industrial AI engineer entry level"
+      - "machine learning engineer manufacturing"
+      - "new graduate engineer programme"
+      - "rotational engineer programme"
+      - "early career engineer electronics"
     location_keywords:
       - "Dublin"
       - "Cork"
