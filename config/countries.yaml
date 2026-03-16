@@ -73,16 +73,24 @@ countries:
       - linkedin
       - google
     search_keywords:
-      - "product engineer entry level"
-      - "test engineer hardware new graduate"
-      - "validation engineer semiconductor"
-      - "industrial AI engineer entry level"
-      - "machine learning engineer manufacturing"
-      - "new graduate engineer programme"
-      - "rotational engineer programme"
-      - "early career engineer electronics"
+      # Hardware test & validation — Irish terminology
+      - "test engineer electronics Ireland"
+      - "hardware test engineer entry level"
+      - "product engineer semiconductor Ireland"
+      - "process engineer entry level semiconductor"
+      - "equipment engineer entry level"
+      - "quality engineer electronics Ireland"
+      # Industrial AI & manufacturing — Irish terminology  
+      - "manufacturing engineer AI Ireland"
+      - "intelligent manufacturing engineer"
+      # Graduate programmes — Irish spelling and format
+      - "graduate programme engineering Ireland 2026"
+      - "graduate engineer semiconductor Ireland"
     location_keywords:
       - "Dublin"
       - "Cork"
-      - "Ireland"
+      - "Leixlip"
+      - "Limerick"
+      - "Galway"
+      - "Ireland
 
