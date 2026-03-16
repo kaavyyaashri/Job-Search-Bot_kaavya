@@ -147,6 +147,9 @@ def groq_rerank(top_jobs: list[dict], profile: dict) -> list[dict]:
     2. Industrial AI roles — applying AI/ML to physical systems: predictive maintenance, manufacturing quality, computer vision for inspection, condition monitoring, industrial automation
     3. New Graduate Programs and Rotational Engineer Programs — any company running structured new grad or rotational programs for engineers
     4. HPC or ML Engineering roles — only when connected to products, infrastructure, or research (not pure software development)
+
+    # Add this note at the end of point 1 in the prompt:
+    "Note: in Ireland, equivalent roles are also titled Process Engineer, Equipment Engineer, Customer Engineer, and Graduate Programme roles at companies like Intel, Analog Devices, Apple Cork, KLA, and ASML."
      
     HARD EXCLUDE — do not include in your rankings even if skills match:
     - Any role that is senior, lead, principal, staff, manager, or director level
