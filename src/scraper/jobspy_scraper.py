@@ -14,18 +14,18 @@ RESUME_PROFILE_PATH = os.path.join(
     os.path.dirname(__file__), '..', '..', 'data', 'resume_profile.json'
 )
 
-def load_resume_titles() -> list[str]:
-    """Load top 2 target titles from resume profile"""
-    try:
-        with open(RESUME_PROFILE_PATH, 'r') as f:
-            profile = json.load(f)
-        titles = profile.get('target_titles', [])
-        top_2  = titles[:2]
-        print(f"   📄 Resume titles loaded (top 2): {top_2}")
-        return top_2
-    except Exception as e:
-        print(f"   ⚠️  Could not load resume profile: {e}")
-        return ["product engineer", "test engineer"]
+# def load_resume_titles() -> list[str]:
+#     """Load top 2 target titles from resume profile"""
+#     try:
+#         with open(RESUME_PROFILE_PATH, 'r') as f:
+#             profile = json.load(f)
+#         titles = profile.get('target_titles', [])
+#         top_2  = titles[:2]
+#         print(f"   📄 Resume titles loaded (top 2): {top_2}")
+#         return top_2
+#     except Exception as e:
+#         print(f"   ⚠️  Could not load resume profile: {e}")
+#         return ["product engineer", "test engineer"]
 
 
 class JobSpyScraper(BaseScraper):
@@ -37,7 +37,11 @@ class JobSpyScraper(BaseScraper):
             print("   ⚠️  jobspy not installed. Run: pip install python-jobspy")
             return []
 
-        search_terms = load_resume_titles()
+        search_terms = self.country_config.get('search_keywords', [])
+        if not search_terms:
+            print("   ⚠️  No search_keywords in countries.yaml — skipping")
+            return []
+        print(f"   📄 Search terms loaded: {len(search_terms)} keywords from countries.yaml")
 
         all_jobs = []
         for term in search_terms:
@@ -82,8 +86,8 @@ class JobSpyScraper(BaseScraper):
                 site_name=site_names,
                 search_term=search_term,
                 location=location,
-                results_wanted=25,
-                hours_old=24,
+                results_wanted=50,
+                hours_old=48,
                 country_indeed=indeed_country,
                 verbose=0,
             )
@@ -112,22 +116,10 @@ class JobSpyScraper(BaseScraper):
                     title        = str(row.get('title',        '') or '').strip()
                     company      = str(row.get('company',      '') or 'Unknown').strip()
                     loc_str      = str(row.get('location',     '') or location).strip()
-                    desc         = str(row.get('description',  '') or '')[:500]
+                    desc         = str(row.get('description',  '') or '')[:1500]
                     url          = str(row.get('job_url',      '') or '').strip()
                     source       = str(row.get('site',         '') or 'unknown').strip()
-                    listing_type = str(row.get('listing_type', '') or '').lower()
-
-                    # Detect easy apply — catch all possible value formats
-                    easy_apply = any(x in listing_type for x in [
-                        'easy_apply',
-                        'easy apply',
-                        'easyapply',
-                        'simple',
-                        'linkedin_easy'
-                    ])
-
-                    if easy_apply:
-                        print(f"   🚫 Easy Apply: {title} @ {company} | '{listing_type}'")
+                    easy_apply = bool(row.get('is_easy_apply', False))
 
                     if not title or not url or url == 'nan':
                         continue
