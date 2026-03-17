@@ -114,8 +114,8 @@ def groq_rerank(top_jobs: list[dict], profile: dict) -> list[dict]:
     """
     api_key = os.environ.get('GROQ_API_KEY', '').strip()
     if not api_key:
-        print("   ⚠️  GROQ_API_KEY not set — skipping re-rank, using TF-IDF top 10")
-        return top_jobs[:10]
+        print("   ⚠️  GROQ_API_KEY not set — skipping re-rank, using TF-IDF top 20")
+        return _tfidf_fallback(top_jobs)
 
     client = Groq(api_key=api_key)
 
@@ -176,7 +176,7 @@ def groq_rerank(top_jobs: list[dict], profile: dict) -> list[dict]:
       }}
     ]
      
-    Return exactly 10 items ranked best to worst. Use only ASCII characters in your response.
+    Return exactly 20 items ranked best to worst. Use only ASCII characters in your response.
     """
 
     try:
@@ -225,7 +225,7 @@ def groq_rerank(top_jobs: list[dict], profile: dict) -> list[dict]:
                 final_jobs.append(job_copy)
 
         print(f"   ✅ Groq re-ranking complete — top match score: {final_jobs[0]['match_score']}%")
-        return final_jobs[:10]
+        return final_jobs[:20]
 
     except json.JSONDecodeError as e:
         print(f"   ⚠️  Groq JSON parse error: {e}")
@@ -240,7 +240,7 @@ def groq_rerank(top_jobs: list[dict], profile: dict) -> list[dict]:
 def _tfidf_fallback(top_jobs: list[dict]) -> list[dict]:
     """Return TF-IDF top 10 with normalized score fields"""
     fallback = []
-    for i, job in enumerate(top_jobs[:10], 1):
+    for i, job in enumerate(top_jobs[:20], 1):
         job_copy = job.copy()
         job_copy['rank']           = i
         job_copy['match_score']    = round(job.get('tfidf_score', 0) * 100)
@@ -276,12 +276,12 @@ def score_and_rank(jobs: list[dict]) -> list[dict]:
     # 2. TF-IDF → top 40
     print(f"\n   Stage 1 — TF-IDF scoring {len(jobs)} jobs...")
     scored      = tfidf_score(jobs, resume_text)
-    top_20      = scored[:40]
-    print(f"   Filtered to top 20 candidates\n")
+    top_40      = scored[:40]
+    print(f"   Filtered to top 40 candidates\n")
 
     # 3. Groq re-rank → top 20
     print(f"   Stage 2 — Groq re-ranking top 20...")
-    top_10      = groq_rerank(top_20, profile)
+    top_20      = groq_rerank(top_40, profile)
 
     print(f"\n✅ Final top {len(top_10)} jobs selected\n")
-    return top_10
+    return top_20
