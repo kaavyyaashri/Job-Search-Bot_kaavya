@@ -7,8 +7,9 @@ sys.path.insert(0, os.path.dirname(__file__))
 
 from config_loader import get_country_config
 from scraper import get_scraper
+from collections import Counter
 from scorer import score_and_rank
-from job_filter import filter_jobs #, filter_by_applicants 
+from job_filter import filter_jobs 
 from email_sender import send_email
 
 RESUME_PROFILE_PATH = os.path.join(
@@ -29,14 +30,16 @@ def run_pipeline(country_name: str):
     config = get_country_config(country_name)
     print(f"   ✅ Country  : {config['name']}")
     print(f"   ✅ Boards   : {config['boards']}")
+    print(f"   ✅ Keywords : {len(config.get('search_keywords', []))} search terms")
     print(f"   ✅ Timezone : {config['timezone']}\n")
 
     # ── Step 2: Load resume profile ───────────────────────
     print("📄 Step 2 — Loading resume profile...")
     try:
         resume = load_resume_profile()
-        print(f"   ✅ Titles   : {resume.get('target_titles')}")
+        print(f"   ✅ Titles   : {len(resume.get('target_titles', []))} target titles")
         print(f"   ✅ Skills   : {len(resume.get('skills', []))} skills loaded")
+        print(f"   ✅ Avoiding : {len(resume.get('avoid_titles', []))} title patterns")
         print(f"   ✅ Seniority: {resume.get('seniority')}\n")
     except FileNotFoundError:
         print("   ❌ resume_profile.json not found!")
@@ -67,20 +70,7 @@ def run_pipeline(country_name: str):
     if not jobs_dicts:
         print(f"\n⚠️  No jobs scraped for {country_name} — skipping.")
         sys.exit(0)
-
-    print(f"   ✅ Total jobs scraped: {len(unique)}")
-    
-    # print("🔍 Step 3 — Scraping jobs...")
-    # scraper    = JobSpyScraper(config)
-    # jobs       = scraper.scrape()
-
-    # if not jobs:
-    #     print(f"\n⚠️  No jobs scraped for {country_name} — skipping.")
-    #     sys.exit(0)
-
-    # jobs_dicts = [vars(j) for j in jobs]
-    # print(f"   ✅ Total jobs scraped: {len(jobs_dicts)}\n")
-    
+   
 
     # ── Step 4: Filter ineligible jobs ───────────────────  ← NEW
     print("🚫 Step 4 — Filtering ineligible jobs...")
@@ -91,7 +81,6 @@ def run_pipeline(country_name: str):
 
     if excluded:
         print(f"\n   Excluded because of:")
-        from collections import Counter
         reasons = Counter(j['excluded_reason'] for j in excluded)
         for reason, count in reasons.most_common():
             print(f"      '{reason}' → {count} jobs removed")
@@ -116,14 +105,6 @@ def run_pipeline(country_name: str):
             f"   #{job.get('rank', '?'):>2}  {job.get('match_score', 0):>3}%  "
             f"{job['title'][:40]:<40}  {job['company'][:25]}"
         )
-    
-    # # ── Step 5b: Filter by applicant count ────────────────  ← NEW
-    # print("\n👥 Step 5b — Checking applicant counts...")
-    # top_jobs = filter_by_applicants(top_jobs, max_applicants=20)
-    
-    # if not top_jobs:
-    #     print(f"\n⚠️  All jobs had too many applicants — skipping email.")
-    #     sys.exit(0)
 
     # ── Step 6: Send email ────────────────────────────────
     print(f"\n📧 Step 6 — Sending email...")
