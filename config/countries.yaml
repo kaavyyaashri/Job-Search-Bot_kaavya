@@ -8,6 +8,7 @@ countries:
       - linkedin
       - google
     search_keywords:
+    search_keywords:
       # Product Engineering / Test / Validation
       - "product engineer entry level"
       - "test engineer hardware entry level"
@@ -23,6 +24,9 @@ countries:
       - "new graduate engineer program semiconductor"
       - "rotational engineer program electronics"
       - "early career engineer program"
+      # HPC and Research
+      - "HPC systems engineer entry level"
+      - "research engineer entry level"
     location_keywords:
       - "United States"
       - "Remote"
@@ -49,6 +53,10 @@ countries:
       # New Graduate Programs
       - "graduate engineer trainee electronics"
       - "associate engineer semiconductor"
+      - "graduate engineer trainee"
+      # HPC and Research
+      - "HPC engineer entry level"
+      - "research engineer entry level"
     location_keywords:
       - "Bangalore"
       - "Hyderabad"
@@ -73,6 +81,9 @@ countries:
       # New Graduate Programs
       - "graduate engineer program electronics"
       - "associate engineer entry level"
+      # HPC and Research
+      - "HPC engineer entry level"
+      - "research engineer entry level"
     location_keywords:
       - "Singapore"
       - "Remote"
@@ -99,6 +110,10 @@ countries:
       - "associate engineer semiconductor"
       - "graduate programme engineering Ireland 2026"
       - "graduate engineer semiconductor Ireland"
+      - "graduate engineer programme"
+      # HPC and Research
+      - "HPC engineer entry level"
+      - "research engineer entry level"
     location_keywords:
       - "Dublin"
       - "Cork"
