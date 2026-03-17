@@ -283,5 +283,5 @@ def score_and_rank(jobs: list[dict]) -> list[dict]:
     print(f"   Stage 2 — Groq re-ranking top 20...")
     top_20      = groq_rerank(top_40, profile)
 
-    print(f"\n✅ Final top {len(top_10)} jobs selected\n")
+    print(f"\n✅ Final top {len(top_20)} jobs selected\n")
     return top_20
