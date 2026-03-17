@@ -29,6 +29,7 @@ def build_resume_text(profile: dict) -> str:
     parts.extend(profile.get('industries', []))
     parts.append(profile.get('education', ''))
     parts.append(profile.get('summary', ''))
+    parts.extend([summary, summary, summary])
     return ' '.join(p for p in parts if p)
 
 def build_job_text(job: dict) -> str:
@@ -125,7 +126,7 @@ def groq_rerank(top_jobs: list[dict], profile: dict) -> list[dict]:
         title       = sanitize_text(job.get('title', ''))
         company     = sanitize_text(job.get('company', ''))
         location    = sanitize_text(job.get('location', ''))
-        description = sanitize_text(job.get('description', ''))[:200]  # cap at 200 chars
+        description = sanitize_text(job.get('description', ''))[:600]  # cap at 200 chars
         job_summaries.append(
             f"{i}. Title: {title} | Company: {company} | "
             f"Location: {location} | Description: {description}"
@@ -181,7 +182,8 @@ def groq_rerank(top_jobs: list[dict], profile: dict) -> list[dict]:
 
     try:
         response = client.chat.completions.create(
-            model="llama-3.1-8b-instant",
+            # model="llama-3.1-8b-instant",
+            model="llama-3.3-70b-versatile",    # upgraded from llama-3.1-8b-instant
             messages=[
                 {
                     "role": "system",
@@ -193,7 +195,7 @@ def groq_rerank(top_jobs: list[dict], profile: dict) -> list[dict]:
                 }
             ],
             temperature=0.1,
-            max_tokens=2000
+            max_tokens= 3500, #2000
         )
 
         raw = response.choices[0].message.content.strip()
@@ -257,8 +259,8 @@ def score_and_rank(jobs: list[dict]) -> list[dict]:
     """
     Full scoring pipeline:
       1. Load resume profile
-      2. TF-IDF filter → top 20
-      3. Groq re-rank → top 10
+      2. TF-IDF filter → top 40
+      3. Groq re-rank → top 20
     Returns final top 10 jobs with scores and skill breakdowns.
     """
     print(f"\n📊 Scoring {len(jobs)} jobs against resume...\n")
@@ -272,13 +274,13 @@ def score_and_rank(jobs: list[dict]) -> list[dict]:
     resume_text = build_resume_text(profile)
     print(f"   📄 Resume profile: {profile.get('target_titles')} | {len(profile.get('skills', []))} skills")
 
-    # 2. TF-IDF → top 20
+    # 2. TF-IDF → top 40
     print(f"\n   Stage 1 — TF-IDF scoring {len(jobs)} jobs...")
     scored      = tfidf_score(jobs, resume_text)
-    top_20      = scored[:20]
+    top_20      = scored[:40]
     print(f"   Filtered to top 20 candidates\n")
 
-    # 3. Groq re-rank → top 10
+    # 3. Groq re-rank → top 20
     print(f"   Stage 2 — Groq re-ranking top 20...")
     top_10      = groq_rerank(top_20, profile)
 
