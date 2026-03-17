@@ -87,7 +87,7 @@ class JobSpyScraper(BaseScraper):
                 search_term=search_term,
                 location=location,
                 results_wanted=50,
-                hours_old=48,
+                hours_old=24,
                 country_indeed=indeed_country,
                 verbose=0,
             )
