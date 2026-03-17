@@ -9,6 +9,14 @@ def build_html_email(jobs: list[dict], country: str) -> str:
     """Build a clean HTML email digest from top 10 jobs"""
 
     today = datetime.now().strftime("%B %d, %Y")
+   
+    # Collect unique sources actually present in this batch
+    sources_present = sorted(set(
+        job.get('source', '').capitalize()
+        for job in jobs
+        if job.get('source')
+    ))
+    sources_str = ' + '.join(sources_present) if sources_present else 'Multiple boards'
 
     # ── Job rows ──────────────────────────────────────
     job_rows = ""
