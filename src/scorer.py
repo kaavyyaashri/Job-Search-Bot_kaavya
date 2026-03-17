@@ -29,7 +29,6 @@ def build_resume_text(profile: dict) -> str:
     parts.extend(profile.get('industries', []))
     parts.append(profile.get('education', ''))
     parts.append(profile.get('summary', ''))
-    parts.extend([summary, summary, summary])
     return ' '.join(p for p in parts if p)
 
 def build_job_text(job: dict) -> str:
