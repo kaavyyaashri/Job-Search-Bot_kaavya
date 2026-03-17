@@ -1,4 +1,5 @@
 import os
+import json
 import requests
 from datetime import datetime, timezone
 from .base_scraper import BaseScraper, Job
@@ -12,13 +13,13 @@ COUNTRY_FILTER = {
     "Ireland":    "ie",
 }
 
-def load_resume_titles() -> list[str]:
-    try:
-        with open(RESUME_PROFILE_PATH, 'r') as f:
-            profile = json.load(f)
-        return profile.get('target_titles', [])[:2]
-    except Exception:
-        return ["product engineer", "test engineer"]
+# def load_resume_titles() -> list[str]:
+#     try:
+#         with open(RESUME_PROFILE_PATH, 'r') as f:
+#             profile = json.load(f)
+#         return profile.get('target_titles', [])[:2]
+#     except Exception:
+#         return ["product engineer", "test engineer"]
         
 class JSearchScraper(BaseScraper):
 
@@ -28,7 +29,12 @@ class JSearchScraper(BaseScraper):
             print("   ⚠️  RAPIDAPI_KEY not set — skipping JSearch")
             return []
 
-        search_terms = load_resume_titles()[:2]
+        # Use same search_keywords from countries.yaml as JobSpy — consistent coverage
+        search_terms = self.country_config.get('search_keywords', [])
+        if not search_terms:
+            print("   ⚠️  No search_keywords in countries.yaml — skipping JSearch")
+            return []
+        print(f"   📄 JSearch: {len(search_terms)} keywords loaded from countries.yaml")
 
         all_jobs = []
         for term in search_terms:
@@ -86,7 +92,7 @@ class JSearchScraper(BaseScraper):
                     title   = str(item.get("job_title",       "") or "").strip()
                     company = str(item.get("employer_name",   "") or "Unknown").strip()
                     loc_str = str(item.get("job_city",        "") or location).strip()
-                    desc    = str(item.get("job_description", "") or "")[:500]
+                    desc    = str(item.get("job_description", "") or "")[:1500]
                     url     = str(item.get("job_apply_link",  "") or "").strip()
 
                     # Posted date
@@ -109,6 +115,17 @@ class JSearchScraper(BaseScraper):
                     if not title or not url:
                         continue
 
+                    # ── Freshness filter — skip jobs older than 24 hours ────
+                    try:
+                        posted_dt = datetime.fromisoformat(str(posted_at))
+                        if posted_dt.tzinfo is None:
+                            posted_dt = posted_dt.replace(tzinfo=timezone.utc)
+                        age_hours = (datetime.now(timezone.utc) - posted_dt).total_seconds() / 3600
+                        if age_hours > 24:
+                            continue
+                    except Exception:
+                        pass
+                    #----------------------------------------------------------- 
                     jobs.append(Job(
                         title=title,
                         company=company,
