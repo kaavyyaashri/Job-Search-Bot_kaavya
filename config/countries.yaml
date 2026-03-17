@@ -8,14 +8,21 @@ countries:
       - linkedin
       - google
     search_keywords:
+      # Product Engineering / Test / Validation
       - "product engineer entry level"
-      - "test engineer hardware new graduate"
-      - "validation engineer semiconductor"
+      - "test engineer hardware entry level"
+      - "validation engineer new graduate"
+      - "manufacturing test engineer entry level"
+      - "hardware validation engineer"
+      # Industrial AI
       - "industrial AI engineer entry level"
       - "machine learning engineer manufacturing"
-      - "new graduate engineer program"
-      - "rotational engineer program"
-      - "early career engineer electronics"
+      - "computer vision engineer industrial"
+      - "AI applications engineer entry level"
+      # New Graduate Programs
+      - "new graduate engineer program semiconductor"
+      - "rotational engineer program electronics"
+      - "early career engineer program"
     location_keywords:
       - "United States"
       - "Remote"
@@ -30,14 +37,18 @@ countries:
       - naukri
       - google
     search_keywords:
+      # Product Engineering / Test / Validation
       - "product engineer entry level"
-      - "test engineer hardware new graduate"
-      - "validation engineer semiconductor"
-      - "industrial AI engineer entry level"
+      - "test engineer hardware"
+      - "validation engineer new graduate"
+      - "embedded systems engineer entry level"
+      # Industrial AI
+      - "industrial AI engineer"
       - "machine learning engineer manufacturing"
-      - "new graduate engineer program"
-      - "rotational engineer program"
-      - "early career engineer electronics"
+      - "computer vision engineer"
+      # New Graduate Programs
+      - "graduate engineer trainee electronics"
+      - "associate engineer semiconductor"
     location_keywords:
       - "Bangalore"
       - "Hyderabad"
@@ -52,14 +63,16 @@ countries:
       - linkedin
       - google
     search_keywords:
-      - "product engineer entry level"
-      - "test engineer hardware new graduate"
-      - "validation engineer semiconductor"
-      - "industrial AI engineer entry level"
+      # Product Engineering / Test / Validation
+      - "product engineer semiconductor"
+      - "test engineer electronics entry level"
+      - "validation engineer new graduate"
+      # Industrial AI
+      - "industrial AI engineer"
       - "machine learning engineer manufacturing"
-      - "new graduate engineer program"
-      - "rotational engineer program"
-      - "early career engineer electronics"
+      # New Graduate Programs
+      - "graduate engineer program electronics"
+      - "associate engineer entry level"
     location_keywords:
       - "Singapore"
       - "Remote"
@@ -73,17 +86,17 @@ countries:
       - linkedin
       - google
     search_keywords:
-      # Hardware test & validation — Irish terminology
-      - "test engineer electronics Ireland"
-      - "hardware test engineer entry level"
-      - "product engineer semiconductor Ireland"
-      - "process engineer entry level semiconductor"
-      - "equipment engineer entry level"
-      - "quality engineer electronics Ireland"
-      # Industrial AI & manufacturing — Irish terminology  
-      - "manufacturing engineer AI Ireland"
-      - "intelligent manufacturing engineer"
-      # Graduate programmes — Irish spelling and format
+      # Product Engineering / Test / Validation
+      - "product engineer entry level"
+      - "test engineer hardware"
+      - "validation engineer new graduate"
+      - "manufacturing engineer entry level"
+      # Industrial AI
+      - "industrial AI engineer"
+      - "machine learning engineer manufacturing"
+      # New Graduate Programs
+      - "graduate engineer programme electronics"
+      - "associate engineer semiconductor"
       - "graduate programme engineering Ireland 2026"
       - "graduate engineer semiconductor Ireland"
     location_keywords:
