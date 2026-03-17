@@ -96,9 +96,9 @@ class JobSpyScraper(BaseScraper):
                 print(f"   ⚠️  No results for '{search_term}' in {location}")
                 return []
 
-            # ── Debug listing_type — runs ONCE per search ──────
-            print(f"   📋 listing_type values: {df['listing_type'].dropna().unique().tolist()}")
-            print(f"   📋 Easy apply count   : {df['listing_type'].str.contains('easy', case=False, na=False).sum()}")
+            # # ── Debug listing_type — runs ONCE per search ──────
+            # print(f"   📋 listing_type values: {df['listing_type'].dropna().unique().tolist()}")
+            # print(f"   📋 Easy apply count   : {df['listing_type'].str.contains('easy', case=False, na=False).sum()}")
 
             jobs = []
             for _, row in df.iterrows():
@@ -124,6 +124,19 @@ class JobSpyScraper(BaseScraper):
                     if not title or not url or url == 'nan':
                         continue
 
+                    # ── Freshness filter — skip jobs older than 24 hours ────
+                    # Stale jobs already have many applicants — not worth your time
+                    # If posted_at is missing or unparseable → keep (benefit of doubt)
+                    try:
+                        posted_dt = datetime.fromisoformat(str(posted_at))
+                        if posted_dt.tzinfo is None:
+                            posted_dt = posted_dt.replace(tzinfo=timezone.utc)
+                        age_hours = (datetime.now(timezone.utc) - posted_dt).total_seconds() / 3600
+                        if age_hours > 24:
+                            continue
+                    except Exception:
+                        pass
+                    # -------------------------------------------------------
                     jobs.append(Job(
                         title=title,
                         company=company,
