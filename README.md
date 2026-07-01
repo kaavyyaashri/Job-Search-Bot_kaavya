@@ -2,7 +2,7 @@
 
 I got tired of manually checking LinkedIn, Indeed, and Naukri every day across multiple countries. So I built this.
 
-Every morning at 8 AM — in the country's timezone, so you can apply at 8am in the country's time as soon as the jobs release — this bot wakes up, scrapes fresh job postings, matches them against your resume using AI, and sends you the top 10 most relevant jobs straight to your inbox. No dashboards, no logins, no manual work. Just open your email and apply.
+Every morning at 8 AM in the country's timezone, so you can apply at 8am in the country's time as soon as the jobs release this bot wakes up, scrapes fresh job postings, matches them against your resume using AI, and sends you the top 10 most relevant jobs straight to your inbox. No dashboards, no logins, no manual work. Just open your email and apply.
 
 It runs entirely on **GitHub Actions** and uses **only free tools**. Zero cost.
 
