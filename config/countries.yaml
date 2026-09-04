@@ -1,35 +1,35 @@
-countries:
-  - name: USA
-    timezone: America/Chicago
-    cron_utc: "0 14 * * *"
-    send_email_at: "08:00"
-    boards:
-      - indeed
-      - linkedin
-      - google
-    search_keywords:
-    search_keywords:
-      # Product Engineering / Test / Validation
-      - "product engineer entry level"
-      - "test engineer hardware entry level"
-      - "validation engineer new graduate"
-      - "manufacturing test engineer entry level"
-      - "hardware validation engineer"
-      # Industrial AI
-      - "industrial AI engineer entry level"
-      - "machine learning engineer manufacturing"
-      - "computer vision engineer industrial"
-      - "AI applications engineer entry level"
-      # New Graduate Programs
-      - "new graduate engineer program semiconductor"
-      - "rotational engineer program electronics"
-      - "early career engineer program"
-      # HPC and Research
-      - "HPC systems engineer entry level"
-      - "research engineer entry level"
-    location_keywords:
-      - "United States"
-      - "Remote"
+# countries:
+#   - name: USA
+#     timezone: America/Chicago
+#     cron_utc: "0 14 * * *"
+#     send_email_at: "08:00"
+#     boards:
+#       - indeed
+#       - linkedin
+#       - google
+#     search_keywords:
+#     search_keywords:
+#       # Product Engineering / Test / Validation
+#       - "product engineer entry level"
+#       - "test engineer hardware entry level"
+#       - "validation engineer new graduate"
+#       - "manufacturing test engineer entry level"
+#       - "hardware validation engineer"
+#       # Industrial AI
+#       - "industrial AI engineer entry level"
+#       - "machine learning engineer manufacturing"
+#       - "computer vision engineer industrial"
+#       - "AI applications engineer entry level"
+#       # New Graduate Programs
+#       - "new graduate engineer program semiconductor"
+#       - "rotational engineer program electronics"
+#       - "early career engineer program"
+#       # HPC and Research
+#       - "HPC systems engineer entry level"
+#       - "research engineer entry level"
+#     location_keywords:
+#       - "United States"
+#       - "Remote"
 
   - name: India
     timezone: Asia/Kolkata
@@ -88,37 +88,37 @@ countries:
       - "Singapore"
       - "Remote"
 
-  - name: Ireland
-    timezone: Europe/Dublin
-    cron_utc: "0 8 * * *"       # 8 AM GMT = 08:00 UTC
-    send_email_at: "08:00"
-    boards:
-      - indeed
-      - linkedin
-      - google
-    search_keywords:
-      # Product Engineering / Test / Validation
-      - "product engineer entry level"
-      - "test engineer hardware"
-      - "validation engineer new graduate"
-      - "manufacturing engineer entry level"
-      # Industrial AI
-      - "industrial AI engineer"
-      - "machine learning engineer manufacturing"
-      # New Graduate Programs
-      - "graduate engineer programme electronics"
-      - "associate engineer semiconductor"
-      - "graduate programme engineering Ireland 2026"
-      - "graduate engineer semiconductor Ireland"
-      - "graduate engineer programme"
-      # HPC and Research
-      - "HPC engineer entry level"
-      - "research engineer entry level"
-    location_keywords:
-      - "Dublin"
-      - "Cork"
-      - "Leixlip"
-      - "Limerick"
-      - "Galway"
-      - "Ireland"
+  # - name: Ireland
+  #   timezone: Europe/Dublin
+  #   cron_utc: "0 8 * * *"       # 8 AM GMT = 08:00 UTC
+  #   send_email_at: "08:00"
+  #   boards:
+  #     - indeed
+  #     - linkedin
+  #     - google
+  #   search_keywords:
+  #     # Product Engineering / Test / Validation
+  #     - "product engineer entry level"
+  #     - "test engineer hardware"
+  #     - "validation engineer new graduate"
+  #     - "manufacturing engineer entry level"
+  #     # Industrial AI
+  #     - "industrial AI engineer"
+  #     - "machine learning engineer manufacturing"
+  #     # New Graduate Programs
+  #     - "graduate engineer programme electronics"
+  #     - "associate engineer semiconductor"
+  #     - "graduate programme engineering Ireland 2026"
+  #     - "graduate engineer semiconductor Ireland"
+  #     - "graduate engineer programme"
+  #     # HPC and Research
+  #     - "HPC engineer entry level"
+  #     - "research engineer entry level"
+  #   location_keywords:
+  #     - "Dublin"
+  #     - "Cork"
+  #     - "Leixlip"
+  #     - "Limerick"
+  #     - "Galway"
+  #     - "Ireland"
 
