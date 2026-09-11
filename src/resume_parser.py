@@ -12,6 +12,20 @@ OUTPUT_PATH = os.path.join(
     'data', 'resume_profile.json'
 )
 
+# ── Manual keyword additions ────────────────────────────────────────────
+# resume_profile.json is fully REGENERATED every time this script runs, so
+# editing that file by hand gets wiped out on the next parse. Add anything
+# you want the bot to always search for here instead — it survives reruns
+# and gets merged in below, on top of whatever Groq extracts from the resume.
+EXTRA_TARGET_TITLES = [
+    # "process engineer",
+    # "equipment engineer",
+]
+EXTRA_SKILLS = [
+    # "labview",
+    # "six sigma",
+]
+
 def extract_text_from_docx(path: str) -> str:
     """Extract all text from a .docx file"""
     doc = Document(path)
@@ -94,6 +108,12 @@ def run():
     print("🤖 Sending to Gemini 1.5 Flash for parsing...")
     profile = parse_resume_with_gemini(resume_text)
     print("✅ Gemini parsing complete\n")
+
+    # 2b. Merge in manual keywords — dict.fromkeys() dedupes while keeping order
+    if EXTRA_TARGET_TITLES:
+        profile['target_titles'] = list(dict.fromkeys(profile.get('target_titles', []) + EXTRA_TARGET_TITLES))
+    if EXTRA_SKILLS:
+        profile['skills'] = list(dict.fromkeys(profile.get('skills', []) + EXTRA_SKILLS))
 
     # 3. Save output
     os.makedirs(os.path.dirname(OUTPUT_PATH), exist_ok=True)
