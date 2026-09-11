@@ -2,6 +2,7 @@ import os
 import json
 import requests
 from datetime import datetime, timezone
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from .base_scraper import BaseScraper, Job
 
 JSEARCH_URL = "https://jsearch.p.rapidapi.com/search"
@@ -37,17 +38,17 @@ class JSearchScraper(BaseScraper):
         print(f"   📄 JSearch: {len(search_terms)} keywords loaded from countries.yaml")
 
         all_jobs = []
-        for term in search_terms:
-            jobs = self._fetch_jobs(api_key, term)
-            all_jobs.extend(jobs)
+        # Keep this thread cap lower than JobSpy's — RapidAPI's free tier
+        # rate-limits harder and too many parallel calls will just get 429s.
+        with ThreadPoolExecutor(max_workers=min(3, len(search_terms))) as executor:
+            futures = [
+                executor.submit(self._fetch_jobs, api_key, term)
+                for term in search_terms
+            ]
+            for future in as_completed(futures):
+                all_jobs.extend(future.result())
 
-        # Deduplicate by URL
-        seen        = set()
-        unique_jobs = []
-        for job in all_jobs:
-            if job.url not in seen:
-                seen.add(job.url)
-                unique_jobs.append(job)
+        unique_jobs = self.dedupe_by_url(all_jobs)
 
         print(f"   JSearch → {len(unique_jobs)} unique jobs found for {self.country}")
         return unique_jobs

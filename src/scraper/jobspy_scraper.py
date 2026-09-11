@@ -1,6 +1,7 @@
 import os
 import json
 from datetime import datetime, timezone
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from .base_scraper import BaseScraper, Job
 
 INDEED_COUNTRY_MAP = {
@@ -44,17 +45,17 @@ class JobSpyScraper(BaseScraper):
         print(f"   📄 Search terms loaded: {len(search_terms)} keywords from countries.yaml")
 
         all_jobs = []
-        for term in search_terms:
-            jobs = self._fetch_jobs(scrape_jobs, term)
-            all_jobs.extend(jobs)
+        # Each keyword search is a blocking network call — this is the actual
+        # time sink, so run them in parallel threads instead of one at a time.
+        with ThreadPoolExecutor(max_workers=min(5, len(search_terms))) as executor:
+            futures = [
+                executor.submit(self._fetch_jobs, scrape_jobs, term)
+                for term in search_terms
+            ]
+            for future in as_completed(futures):
+                all_jobs.extend(future.result())
 
-        # Deduplicate by URL
-        seen        = set()
-        unique_jobs = []
-        for job in all_jobs:
-            if job.url not in seen:
-                seen.add(job.url)
-                unique_jobs.append(job)
+        unique_jobs = self.dedupe_by_url(all_jobs)
 
         print(f"   JobSpy → {len(unique_jobs)} unique jobs found for {self.country}")
         return unique_jobs

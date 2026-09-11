@@ -28,3 +28,13 @@ class BaseScraper(ABC):
     def to_dict_list(self, jobs: list[Job]) -> list[dict]:
         return [vars(j) for j in jobs]
 
+    def dedupe_by_url(self, jobs: list[Job]) -> list[Job]:
+        """Shared by every scraper — dedupe a job list by URL, keeping first seen."""
+        seen = set()
+        unique = []
+        for job in jobs:
+            if job.url not in seen:
+                seen.add(job.url)
+                unique.append(job)
+        return unique
+
