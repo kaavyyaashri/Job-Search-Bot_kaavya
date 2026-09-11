@@ -54,11 +54,26 @@
       - "graduate engineer trainee electronics"
       - "associate engineer semiconductor"
       - "graduate engineer trainee"
-      # HPC and Research
-      - "HPC engineer entry level"
-      - "research engineer entry level"
+      - "graduate apprentice electronics"
+      - "trainee engineer semiconductor"
+      - "fresher electronics engineer"
+      # # HPC and Research
+      # - "HPC engineer entry level"
+      # - "research engineer entry level"
+      # Added from your interest list
+      - "application engineer entry level"
+      - "field application engineer entry level"
+      - "product validation engineer"
+      - "systems integration engineer entry level"
+      - "technical support engineer entry level"
+      - "npi engineer"
+      - "verification engineer entry level"
+      - "pcb design engineer entry level"
+      - "industrial automation engineer entry level"
+      - "iot engineer entry level"
     location_keywords:
       - "Bangalore"
+      - "Bengaluru"
       - "Hyderabad"
       - "Pune"
 
