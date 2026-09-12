@@ -38,9 +38,9 @@ def extract_text_from_docx(path: str) -> str:
 def parse_resume_with_groq(resume_text: str) -> dict:
     """Send resume text to groq and extract structured profile"""
 
-    api_key = os.environ.get('groq_API_KEY')
+    api_key = os.environ.get('GROQ_API_KEY')
     if not api_key:
-        raise ValueError("groq_API_KEY not set in environment/secrets")
+        raise ValueError("GROQ_API_KEY not set in environment/secrets")
 
     client = Groq(api_key=api_key)
     
