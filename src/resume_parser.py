@@ -1,6 +1,6 @@
 import os
 import json
-from groq import groq
+from groq import Groq
 from docx import Document
 # ── Paths ──────────────────────────────────────────────
 RESUME_PATH = os.path.join(
@@ -42,7 +42,7 @@ def parse_resume_with_groq(resume_text: str) -> dict:
     if not api_key:
         raise ValueError("groq_API_KEY not set in environment/secrets")
 
-    client = groq(api_key=api_key)
+    client = Groq(api_key=api_key)
     
     # genai.configure(api_key=api_key)
     # model = genai.GenerativeModel('groq-1.5-flash')
