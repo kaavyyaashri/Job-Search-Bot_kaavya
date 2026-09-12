@@ -43,9 +43,6 @@ def parse_resume_with_groq(resume_text: str) -> dict:
         raise ValueError("GROQ_API_KEY not set in environment/secrets")
 
     client = Groq(api_key=api_key)
-    
-    # genai.configure(api_key=api_key)
-    # model = genai.GenerativeModel('gemini-1.5-flash')
 
     prompt = f"""
 You are a resume parser. Extract structured information from the resume below.
@@ -70,7 +67,7 @@ Resume:
 """
 
     response = client.chat.completions.create(
-        model="openai/gpt-oss-20b",              # replaces llama-3.1-8b-instant, deprecated by Groq Aug 16, 2026
+        model="llama-3.1-8b-instant",           # free, fast, great at extraction
         messages=[
             {
                 "role": "system",
@@ -82,7 +79,7 @@ Resume:
             }
         ],
         temperature=0.1,                        # low temp = consistent structured output
-        max_tokens=1000
+        max_tokens=2000    # raised from 1000 — was truncating mid-JSON on longer resumes
     )
 
     raw = response.choices[0].message.content.strip()
@@ -94,7 +91,12 @@ Resume:
             raw = raw[4:]
     raw = raw.strip()
 
-    return json.loads(raw)
+    try:
+        return json.loads(raw)
+    except json.JSONDecodeError as e:
+        print(f"⚠️  Groq response could not be parsed as JSON: {e}")
+        print(f"⚠️  Raw response was {len(raw)} chars — last 200 chars:\n{raw[-200:]}")
+        raise
 
 def run():
     print("\n📄 Step 2 — Resume Parser\n")
