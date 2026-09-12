@@ -139,24 +139,24 @@ def groq_rerank(top_jobs: list[dict], profile: dict) -> list[dict]:
     CANDIDATE BACKGROUND:
     - Degree: MS Electrical Engineering, Texas State University
     - Experience: 2 years total — PCB testing and validation at an electronics company, HPC cluster administration using SLURM, deep learning model development for IEEE-published research
-    - Work authorization: F1 STEM OPT (can work in the US without sponsorship for 2 years)
+    - Based in Hyderabad, India — targeting roles in India and Singapore only
     - Seniority: Entry-level only
-     
+ 
     WHAT THIS CANDIDATE IS LOOKING FOR (in priority order):
-    1. Product Engineering, Test Engineering, Validation Engineering — hardware bring-up, PCB testing, embedded systems validation, product lifecycle, semiconductor or electronics companies
+    1. GCC (Global Capability Center) bridge roles in India — Product Engineering, Test Engineering, Validation Engineering — hardware bring-up, PCB testing, embedded systems validation, product lifecycle, semiconductor or electronics companies
     2. Industrial AI roles — applying AI/ML to physical systems: predictive maintenance, manufacturing quality, computer vision for inspection, condition monitoring, industrial automation
-    3. New Graduate Programs and Rotational Engineer Programs — any company running structured new grad or rotational programs for engineers
+    3. New Graduate Programs and Rotational Engineer Programs in India or Singapore — any company running structured new grad or rotational programs for engineers
     4. HPC or ML Engineering roles — only when connected to products, infrastructure, or research (not pure software development)
-
-    # Add this note at the end of point 1 in the prompt:
-    "Note: in Ireland, equivalent roles are also titled Process Engineer, Equipment Engineer, Customer Engineer, and Graduate Programme roles at companies like Intel, Analog Devices, Apple Cork, KLA, and ASML."
-     
+ 
+    Note: in Singapore, equivalent roles are also titled Process Engineer, Equipment Engineer, Field Application Engineer, Customer Engineer, and Graduate Programme roles at semiconductor/electronics companies (e.g. GlobalFoundries, Micron, Applied Materials, Infineon, STMicroelectronics).
+ 
     HARD EXCLUDE — do not include in your rankings even if skills match:
     - Any role that is senior, lead, principal, staff, manager, or director level
     - Pure software engineering, devops, site reliability, network engineering, security engineering
     - Power systems, transmission, substation, civil, or mechanical engineering
-    - Roles requiring security clearance or US citizenship
-     
+    - Roles located outside India or Singapore
+    - Roles requiring Singapore citizenship or PR (Singapore PEP/Employment Pass–eligible roles are fine)
+ 
     Candidate skills: {skills_text}
     Target titles: {titles_text}
      
@@ -276,12 +276,12 @@ def score_and_rank(jobs: list[dict]) -> list[dict]:
     # 2. TF-IDF → top 40
     print(f"\n   Stage 1 — TF-IDF scoring {len(jobs)} jobs...")
     scored      = tfidf_score(jobs, resume_text)
-    top_40      = scored[:40]
+    top_25      = scored[:25]
     print(f"   Filtered to top 40 candidates\n")
 
     # 3. Groq re-rank → top 20
     print(f"   Stage 2 — Groq re-ranking top 20...")
-    top_20      = groq_rerank(top_40, profile)
+    top_20      = groq_rerank(top_25, profile)
 
     print(f"\n✅ Final top {len(top_20)} jobs selected\n")
     return top_20
