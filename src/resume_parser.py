@@ -67,7 +67,7 @@ Resume:
 """
 
     response = client.chat.completions.create(
-        model="llama-3.1-8b-instant",           # free, fast, great at extraction
+        model= "openai/gpt-oss-20b",#"llama-3.1-8b-instant",           # free, fast, great at extraction
         messages=[
             {
                 "role": "system",
