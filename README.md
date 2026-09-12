@@ -132,7 +132,7 @@ You don't need to know this to use it — but here's what happens under the hood
 1. GitHub Actions wakes up at the scheduled time
 2. Loads your resume profile (skills, titles, seniority)
 3. Scrapes Indeed + LinkedIn for jobs posted in the last 24 hours
-4. Runs TF-IDF cosine similarity to filter the best 20 candidates
+4. Runs TF-IDF cosine similarity to filter the best 20 applications
 5. Sends top 20 to Groq AI (free) for intelligent re-ranking
 6. Emails you the final top 10 with match scores and skill breakdowns
 ```
