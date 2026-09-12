@@ -182,7 +182,7 @@ def groq_rerank(top_jobs: list[dict], profile: dict) -> list[dict]:
     try:
         response = client.chat.completions.create(
             # model="llama-3.1-8b-instant",
-            model="llama-3.3-70b-versatile",    # upgraded from llama-3.1-8b-instant
+            model="openai/gpt-oss-120b" #"llama-3.3-70b-versatile",    # upgraded from llama-3.1-8b-instant
             messages=[
                 {
                     "role": "system",
