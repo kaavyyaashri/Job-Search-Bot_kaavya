@@ -184,7 +184,7 @@ def groq_rerank(top_jobs: list[dict], profile: dict) -> list[dict]:
             # llama-3.1-8b-instant: same free Groq account, but 500K tokens/day
             # vs the 70B model's 100K tokens/day, and 14,400 requests/day vs
             # 1,000/day. This ranking task doesn't need 70B-level reasoning.
-            model="llama-3.1-8b-instant",
+            model="openai/gpt-oss-120b", #"llama-3.1-8b-instant",
             messages=[
                 {
                     "role": "system",
