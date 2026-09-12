@@ -16,7 +16,7 @@ OUTPUT_PATH = os.path.join(
 # resume_profile.json is fully REGENERATED every time this script runs, so
 # editing that file by hand gets wiped out on the next parse. Add anything
 # you want the bot to always search for here instead — it survives reruns
-# and gets merged in below, on top of whatever groq extracts from the resume.
+# and gets merged in below, on top of whatever Groq extracts from the resume.
 EXTRA_TARGET_TITLES = [
     # "process engineer",
     # "equipment engineer",
@@ -36,7 +36,7 @@ def extract_text_from_docx(path: str) -> str:
     return '\n'.join(full_text)
 
 def parse_resume_with_groq(resume_text: str) -> dict:
-    """Send resume text to groq and extract structured profile"""
+    """Send resume text to Groq and extract structured profile"""
 
     api_key = os.environ.get('GROQ_API_KEY')
     if not api_key:
@@ -45,7 +45,7 @@ def parse_resume_with_groq(resume_text: str) -> dict:
     client = Groq(api_key=api_key)
     
     # genai.configure(api_key=api_key)
-    # model = genai.GenerativeModel('groq-1.5-flash')
+    # model = genai.GenerativeModel('gemini-1.5-flash')
 
     prompt = f"""
 You are a resume parser. Extract structured information from the resume below.
@@ -70,7 +70,7 @@ Resume:
 """
 
     response = client.chat.completions.create(
-        model="openai/gpt-oss-20b",  # used before "llama-3.1-8b-instant" (deprecated) # free, fast, great at extraction
+        model="openai/gpt-oss-20b",              # replaces llama-3.1-8b-instant, deprecated by Groq Aug 16, 2026
         messages=[
             {
                 "role": "system",
@@ -87,7 +87,7 @@ Resume:
 
     raw = response.choices[0].message.content.strip()
 
-    # Strip accidental markdown fences if groq adds them
+    # Strip accidental markdown fences if the model adds them
     if raw.startswith("```"):
         raw = raw.split("```")[1]
         if raw.startswith("json"):
@@ -104,10 +104,10 @@ def run():
     resume_text = extract_text_from_docx(RESUME_PATH)
     print(f"✅ Extracted {len(resume_text)} characters of text\n")
 
-    # 2. Parse with groq
-    print("🤖 Sending to groq 1.5 Flash for parsing...")
+    # 2. Parse with Groq
+    print("🤖 Sending to Groq for parsing...")
     profile = parse_resume_with_groq(resume_text)
-    print("✅ groq parsing complete\n")
+    print("✅ Groq parsing complete\n")
 
     # 2b. Merge in manual keywords — dict.fromkeys() dedupes while keeping order
     if EXTRA_TARGET_TITLES:
