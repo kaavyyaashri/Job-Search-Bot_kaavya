@@ -125,7 +125,7 @@ def groq_rerank(top_jobs: list[dict], profile: dict) -> list[dict]:
         title       = sanitize_text(job.get('title', ''))
         company     = sanitize_text(job.get('company', ''))
         location    = sanitize_text(job.get('location', ''))
-        description = sanitize_text(job.get('description', ''))[:400]  # trimmed from 600 to cut input tokens
+        description = sanitize_text(job.get('description', ''))[:600]  # cap at 200 chars
         job_summaries.append(
             f"{i}. Title: {title} | Company: {company} | "
             f"Location: {location} | Description: {description}"
@@ -181,10 +181,8 @@ def groq_rerank(top_jobs: list[dict], profile: dict) -> list[dict]:
 
     try:
         response = client.chat.completions.create(
-            # llama-3.1-8b-instant: same free Groq account, but 500K tokens/day
-            # vs the 70B model's 100K tokens/day, and 14,400 requests/day vs
-            # 1,000/day. This ranking task doesn't need 70B-level reasoning.
-            model="openai/gpt-oss-120b", #"llama-3.1-8b-instant",
+            # model="llama-3.1-8b-instant",
+            model="llama-3.3-70b-versatile",    # upgraded from llama-3.1-8b-instant
             messages=[
                 {
                     "role": "system",
@@ -275,16 +273,15 @@ def score_and_rank(jobs: list[dict]) -> list[dict]:
     resume_text = build_resume_text(profile)
     print(f"   📄 Resume profile: {profile.get('target_titles')} | {len(profile.get('skills', []))} skills")
 
-    # 2. TF-IDF → top 25 (trimmed from 40 — cuts Groq input tokens by ~40%
-    #    while still leaving a healthy pool above the 20 you actually need)
+    # 2. TF-IDF → top 40
     print(f"\n   Stage 1 — TF-IDF scoring {len(jobs)} jobs...")
     scored      = tfidf_score(jobs, resume_text)
-    top_25      = scored[:25]
-    print(f"   Filtered to top 25 candidates\n")
+    top_40      = scored[:40]
+    print(f"   Filtered to top 40 candidates\n")
 
     # 3. Groq re-rank → top 20
     print(f"   Stage 2 — Groq re-ranking top 20...")
-    top_20      = groq_rerank(top_25, profile)
+    top_20      = groq_rerank(top_40, profile)
 
     print(f"\n✅ Final top {len(top_20)} jobs selected\n")
     return top_20

@@ -13,7 +13,7 @@ def test_scoring(country_name: str):
 
     # Step 1 — Scrape
     config  = get_country_config(country_name)
-    scraper = JobSpyScraper(config, config['name'])
+    scraper = JobSpyScraper(config)
     jobs    = scraper.scrape()
 
     if not jobs:
