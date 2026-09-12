@@ -1,6 +1,6 @@
 import os
 import json
-from groq import Groq
+from groq import groq
 from docx import Document
 # ── Paths ──────────────────────────────────────────────
 RESUME_PATH = os.path.join(
@@ -16,7 +16,7 @@ OUTPUT_PATH = os.path.join(
 # resume_profile.json is fully REGENERATED every time this script runs, so
 # editing that file by hand gets wiped out on the next parse. Add anything
 # you want the bot to always search for here instead — it survives reruns
-# and gets merged in below, on top of whatever Groq extracts from the resume.
+# and gets merged in below, on top of whatever groq extracts from the resume.
 EXTRA_TARGET_TITLES = [
     # "process engineer",
     # "equipment engineer",
@@ -35,17 +35,17 @@ def extract_text_from_docx(path: str) -> str:
             full_text.append(para.text.strip())
     return '\n'.join(full_text)
 
-def parse_resume_with_gemini(resume_text: str) -> dict:
-    """Send resume text to Groq and extract structured profile"""
+def parse_resume_with_groq(resume_text: str) -> dict:
+    """Send resume text to groq and extract structured profile"""
 
-    api_key = os.environ.get('GROQ_API_KEY')
+    api_key = os.environ.get('groq_API_KEY')
     if not api_key:
-        raise ValueError("GROQ_API_KEY not set in environment/secrets")
+        raise ValueError("groq_API_KEY not set in environment/secrets")
 
-    client = Groq(api_key=api_key)
+    client = groq(api_key=api_key)
     
     # genai.configure(api_key=api_key)
-    # model = genai.GenerativeModel('gemini-1.5-flash')
+    # model = genai.GenerativeModel('groq-1.5-flash')
 
     prompt = f"""
 You are a resume parser. Extract structured information from the resume below.
@@ -70,7 +70,7 @@ Resume:
 """
 
     response = client.chat.completions.create(
-        model="llama-3.1-8b-instant",           # free, fast, great at extraction
+        model="openai/gpt-oss-20b"  # used before "llama-3.1-8b-instant" (deprecated) # free, fast, great at extraction
         messages=[
             {
                 "role": "system",
@@ -87,7 +87,7 @@ Resume:
 
     raw = response.choices[0].message.content.strip()
 
-    # Strip accidental markdown fences if Gemini adds them
+    # Strip accidental markdown fences if groq adds them
     if raw.startswith("```"):
         raw = raw.split("```")[1]
         if raw.startswith("json"):
@@ -104,10 +104,10 @@ def run():
     resume_text = extract_text_from_docx(RESUME_PATH)
     print(f"✅ Extracted {len(resume_text)} characters of text\n")
 
-    # 2. Parse with Gemini
-    print("🤖 Sending to Gemini 1.5 Flash for parsing...")
-    profile = parse_resume_with_gemini(resume_text)
-    print("✅ Gemini parsing complete\n")
+    # 2. Parse with groq
+    print("🤖 Sending to groq 1.5 Flash for parsing...")
+    profile = parse_resume_with_groq(resume_text)
+    print("✅ groq parsing complete\n")
 
     # 2b. Merge in manual keywords — dict.fromkeys() dedupes while keeping order
     if EXTRA_TARGET_TITLES:
