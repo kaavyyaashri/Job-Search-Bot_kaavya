@@ -70,7 +70,7 @@ Resume:
 """
 
     response = client.chat.completions.create(
-        model="openai/gpt-oss-20b"  # used before "llama-3.1-8b-instant" (deprecated) # free, fast, great at extraction
+        model="openai/gpt-oss-20b",  # used before "llama-3.1-8b-instant" (deprecated) # free, fast, great at extraction
         messages=[
             {
                 "role": "system",
