@@ -7,7 +7,7 @@ def load_countries():
     """Load all country configs from countries.yaml"""
     with open(CONFIG_PATH, 'r') as f:
         data = yaml.safe_load(f)
-    return data ['countries']
+    return data['countries']
 
 def get_country_config(country_name: str) -> dict:
     """Fetch config for a specific country by name (case-insensitive)"""
