@@ -277,7 +277,7 @@ def score_and_rank(jobs: list[dict]) -> list[dict]:
     print(f"\n   Stage 1 — TF-IDF scoring {len(jobs)} jobs...")
     scored      = tfidf_score(jobs, resume_text)
     top_25      = scored[:25]
-    print(f"   Filtered to top 40 candidates\n")
+    print(f"   Filtered to top 25 candidates\n")
 
     # 3. Groq re-rank → top 20
     print(f"   Stage 2 — Groq re-ranking top 20...")
