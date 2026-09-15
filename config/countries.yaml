@@ -33,7 +33,7 @@ countries:
 
   - name: India
     timezone: Asia/Kolkata
-    cron_utc: "30 2 * * *"
+    cron_utc: "30 3 * * *"
     send_email_at: "08:00"
     boards:
       - indeed
