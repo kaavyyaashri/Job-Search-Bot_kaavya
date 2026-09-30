@@ -15,18 +15,17 @@ import os
 #     except Exception:
 #         return []
 
-AVOID_TITLES = [
-    # seniority
-    "senior", "sr", "lead", "principal", "staff", "manager", "director",
-    "head", "architect", "vp",
-    # domains you don't want
-    "devops", "site reliability", "network engineer", "security engineer",
-    "civil", "mechanical", "transmission", "substation",
-]
+AVOID_TITLES = ["senior", "sr", "lead", "principal", "staff", "manager", "director",
+                "head", "architect", "vp", "devops", "site reliability", "network engineer",
+                "security engineer", "civil", "mechanical", "transmission", "substation"]
 
-def load_avoid_titles() -> list[str]:
-    """Titles to avoid (defined in this file, so parser reruns can't wipe them)"""
-    return AVOID_TITLES
+def load_avoid_titles():
+    try:
+        with open(RESUME_PROFILE_PATH) as f:
+            extra = [t.lower().strip() for t in json.load(f).get('avoid_titles', [])]
+    except Exception:
+        extra = []
+    return AVOID_TITLES + extra
 # ─────────────────────────────────────────────────────
 # Keywords that indicate you CANNOT apply
 # ─────────────────────────────────────────────────────
