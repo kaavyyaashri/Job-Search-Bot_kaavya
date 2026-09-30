@@ -2,9 +2,9 @@ import re
 import json
 import os
 
-# RESUME_PROFILE_PATH = os.path.join(
-#     os.path.dirname(__file__), '..', 'data', 'resume_profile.json'
-# )
+RESUME_PROFILE_PATH = os.path.join(
+    os.path.dirname(__file__), '..', 'data', 'resume_profile.json'
+)
 
 # def load_avoid_titles() -> list[str]:
 #     """Load titles to avoid from resume_profile.json"""
@@ -18,14 +18,22 @@ import os
 AVOID_TITLES = ["senior", "sr", "lead", "principal", "staff", "manager", "director",
                 "head", "architect", "vp", "devops", "site reliability", "network engineer",
                 "security engineer", "civil", "mechanical", "transmission", "substation"]
-
-def load_avoid_titles():
+def load_avoid_titles() -> list[str]:
+    """Load titles to avoid from resume_profile.json"""
     try:
-        with open(RESUME_PROFILE_PATH) as f:
-            extra = [t.lower().strip() for t in json.load(f).get('avoid_titles', [])]
+        with open(RESUME_PROFILE_PATH, 'r') as f:
+            profile = json.load(f)
+        return [t.lower().strip() for t in profile.get('avoid_titles', [])]
     except Exception:
-        extra = []
-    return AVOID_TITLES + extra
+        return []
+      
+# def load_avoid_titles():
+#     try:
+#         with open(RESUME_PROFILE_PATH) as f:
+#             extra = [t.lower().strip() for t in json.load(f).get('avoid_titles', [])]
+#     except Exception:
+#         extra = []
+#     return AVOID_TITLES + extra
 # ─────────────────────────────────────────────────────
 # Keywords that indicate you CANNOT apply
 # ─────────────────────────────────────────────────────
@@ -131,7 +139,7 @@ def is_job_excluded(job: dict) -> tuple[bool, str]:
         # Use word boundary to avoid false matches
         pattern = r'\b' + re.escape(avoid) + r'\b'
         if re.search(pattern, title):
-            return True, f"avoid title: {avoid}"
+            return False, f"avoid title: {avoid}" # As i am not looking in USA at the moment
 
     # Check if any safe phrase is present first
     for safe in SAFE_PHRASES:
