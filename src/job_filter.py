@@ -2,18 +2,31 @@ import re
 import json
 import os
 
-RESUME_PROFILE_PATH = os.path.join(
-    os.path.dirname(__file__), '..', 'data', 'resume_profile.json'
-)
+# RESUME_PROFILE_PATH = os.path.join(
+#     os.path.dirname(__file__), '..', 'data', 'resume_profile.json'
+# )
+
+# def load_avoid_titles() -> list[str]:
+#     """Load titles to avoid from resume_profile.json"""
+#     try:
+#         with open(RESUME_PROFILE_PATH, 'r') as f:
+#             profile = json.load(f)
+#         return [t.lower().strip() for t in profile.get('avoid_titles', [])]
+#     except Exception:
+#         return []
+
+AVOID_TITLES = [
+    # seniority
+    "senior", "sr", "lead", "principal", "staff", "manager", "director",
+    "head", "architect", "vp",
+    # domains you don't want
+    "devops", "site reliability", "network engineer", "security engineer",
+    "civil", "mechanical", "transmission", "substation",
+]
 
 def load_avoid_titles() -> list[str]:
-    """Load titles to avoid from resume_profile.json"""
-    try:
-        with open(RESUME_PROFILE_PATH, 'r') as f:
-            profile = json.load(f)
-        return [t.lower().strip() for t in profile.get('avoid_titles', [])]
-    except Exception:
-        return []
+    """Titles to avoid (defined in this file, so parser reruns can't wipe them)"""
+    return AVOID_TITLES
 # ─────────────────────────────────────────────────────
 # Keywords that indicate you CANNOT apply
 # ─────────────────────────────────────────────────────
