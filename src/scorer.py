@@ -244,17 +244,16 @@ Return the best 10 postings, ranked best to worst."""
         return _tfidf_fallback(top_jobs)
 
 
-def _tfidf_fallback(top_jobs: list[dict]) -> list[dict]:
-    """Return TF-IDF top 10 with normalized score fields"""
+def _tfidf_fallback(top_jobs):
+    hi = max((j.get('tfidf_score', 0) for j in top_jobs), default=0) or 1
     fallback = []
-    for i, job in enumerate(top_jobs[:20], 1):
-        job_copy = job.copy()
-        job_copy['rank']           = i
-        job_copy['match_score']    = round(job.get('tfidf_score', 0) * 100)
-        job_copy['match_reason']   = 'Matched via TF-IDF keyword similarity'
-        job_copy['matched_skills'] = []
-        job_copy['missing_skills'] = []
-        fallback.append(job_copy)
+    for i, job in enumerate(top_jobs[:10], 1):
+        j = job.copy()
+        j['rank'] = i
+        j['match_score'] = round(70 * j.get('tfidf_score', 0) / hi)  # relative, capped at 70
+        j['match_reason'] = 'Keyword match only (AI ranking unavailable)'
+        j['matched_skills'], j['missing_skills'] = [], []
+        fallback.append(j)
     return fallback
 
 # ─────────────────────────────────────────
