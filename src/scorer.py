@@ -107,25 +107,23 @@ def sanitize_text(text: str) -> str:
     return text.strip()
 
 
+import time
+
 def groq_rerank(top_jobs: list[dict], profile: dict) -> list[dict]:
-    """
-    Send top 20 TF-IDF jobs to Groq for intelligent re-ranking.
-    Returns top 10 with match scores and skill breakdowns.
-    """
+    """Send TF-IDF candidates to Groq for re-ranking. Returns top 10."""
     api_key = os.environ.get('GROQ_API_KEY', '').strip()
     if not api_key:
-        print("   ⚠️  GROQ_API_KEY not set — skipping re-rank, using TF-IDF top 20")
+        print("   ⚠️  GROQ_API_KEY not set — using TF-IDF fallback")
         return _tfidf_fallback(top_jobs)
 
     client = Groq(api_key=api_key)
 
-    # Build compact sanitized job list for the prompt
     job_summaries = []
     for i, job in enumerate(top_jobs, 1):
         title       = sanitize_text(job.get('title', ''))
         company     = sanitize_text(job.get('company', ''))
         location    = sanitize_text(job.get('location', ''))
-        description = sanitize_text(job.get('description', ''))[:600]  # cap at 200 chars
+        description = sanitize_text(job.get('description', ''))[:350]
         job_summaries.append(
             f"{i}. Title: {title} | Company: {company} | "
             f"Location: {location} | Description: {description}"
@@ -135,97 +133,106 @@ def groq_rerank(top_jobs: list[dict], profile: dict) -> list[dict]:
     skills_text = ', '.join(profile.get('skills', []))
     titles_text = ', '.join(profile.get('target_titles', []))
 
-    prompt = f"""You are a job matching expert for an entry-level candidate. Your job is to find the most relevant postings from the list below.
-    CANDIDATE BACKGROUND:
-    - Degree: MS Electrical Engineering, Texas State University
-    - Experience: 2 years total — PCB testing and validation at an electronics company, HPC cluster administration using SLURM, deep learning model development for IEEE-published research
-    - Based in Hyderabad, India — targeting roles in India and Singapore only
-    - Seniority: Entry-level only
- 
-    WHAT THIS CANDIDATE IS LOOKING FOR (in priority order):
-    1. GCC (Global Capability Center) bridge roles in India — Product Engineering, Test Engineering, Validation Engineering — hardware bring-up, PCB testing, embedded systems validation, product lifecycle, semiconductor or electronics companies
-    2. Industrial AI roles — applying AI/ML to physical systems: predictive maintenance, manufacturing quality, computer vision for inspection, condition monitoring, industrial automation
-    3. New Graduate Programs and Rotational Engineer Programs in India or Singapore — any company running structured new grad or rotational programs for engineers
-    4. HPC or ML Engineering roles — only when connected to products, infrastructure, or research (not pure software development)
- 
-    Note: in Singapore, equivalent roles are also titled Process Engineer, Equipment Engineer, Field Application Engineer, Customer Engineer, and Graduate Programme roles at semiconductor/electronics companies (e.g. GlobalFoundries, Micron, Applied Materials, Infineon, STMicroelectronics).
- 
-    HARD EXCLUDE — do not include in your rankings even if skills match:
-    - Any role that is senior, lead, principal, staff, manager, or director level
-    - Pure software engineering, devops, site reliability, network engineering, security engineering
-    - Power systems, transmission, substation, civil, or mechanical engineering
-    - Roles located outside India or Singapore
-    - Roles requiring Singapore citizenship or PR (Singapore PEP/Employment Pass–eligible roles are fine)
- 
-    Candidate skills: {skills_text}
-    Target titles: {titles_text}
-     
-    Job Postings:
-    {jobs_text}
-     
-    Return ONLY a valid JSON array. No explanation, no markdown, no code fences.
-    Each item must have exactly these fields:
-    [
-      {{
-        "rank": 1,
-        "job_number": 1,
-        "match_score": 85,
-        "match_reason": "one sentence explaining why this fits the candidate's interests",
-        "matched_skills": ["skill1", "skill2"],
-        "missing_skills": ["skill3"]
-      }}
-    ]
-     
-    Return exactly 20 items ranked best to worst. Use only ASCII characters in your response.
-    """
+    prompt = f"""You are a job matching expert for an entry-level candidate. Find the most relevant postings from the list below.
+
+CANDIDATE BACKGROUND:
+- Degree: MS Electrical Engineering, Texas State University
+- Experience: 2 years total - PCB testing and validation at an electronics company, HPC cluster administration using SLURM, deep learning model development for IEEE-published research
+- Based in Hyderabad, India - targeting roles in India and Singapore only
+- Seniority: Entry-level only
+
+WHAT THIS CANDIDATE IS LOOKING FOR (in priority order):
+1. GCC (Global Capability Center) bridge roles in India - Product Engineering, Test Engineering, Validation Engineering - hardware bring-up, PCB testing, embedded systems validation, product lifecycle, semiconductor or electronics companies
+2. Industrial AI roles - applying AI/ML to physical systems: predictive maintenance, manufacturing quality, computer vision for inspection, condition monitoring, industrial automation
+3. New Graduate Programs and Rotational Engineer Programs in India or Singapore
+4. HPC or ML Engineering roles - only when connected to products, infrastructure, or research (not pure software development)
+
+Note: in Singapore, equivalent roles are also titled Process Engineer, Equipment Engineer, Field Application Engineer, Customer Engineer, and Graduate Programme roles at semiconductor/electronics companies.
+
+HARD EXCLUDE - do not include even if skills match:
+- Senior, lead, principal, staff, manager, or director level roles
+- Pure software engineering, devops, site reliability, network engineering, security engineering
+- Power systems, transmission, substation, civil, or mechanical engineering
+- Roles located outside India or Singapore
+- Roles requiring Singapore citizenship or PR
+
+Candidate skills: {skills_text}
+Target titles: {titles_text}
+
+Job Postings:
+{jobs_text}
+
+Return ONLY a JSON object in exactly this shape. Keep match_reason under 20 words. Use only ASCII characters.
+{{
+  "rankings": [
+    {{
+      "rank": 1,
+      "job_number": 1,
+      "match_score": 85,
+      "match_reason": "short reason",
+      "matched_skills": ["skill1", "skill2"],
+      "missing_skills": ["skill3"]
+    }}
+  ]
+}}
+
+Return the best 10 postings, ranked best to worst."""
+
+    raw = None
+    for attempt in range(3):
+        try:
+            response = client.chat.completions.create(
+                model="openai/gpt-oss-120b",
+                messages=[
+                    {"role": "system",
+                     "content": "You are a precise job matching assistant. Return valid JSON only."},
+                    {"role": "user", "content": prompt},
+                ],
+                temperature=0.1,
+                max_completion_tokens=8000,      # room for reasoning + answer
+                reasoning_effort="low",          # less reasoning overhead
+                response_format={"type": "json_object"},
+            )
+            choice = response.choices[0]
+            print(f"   ℹ️  Groq finish_reason: {choice.finish_reason}")
+            raw = (choice.message.content or "").strip()
+            if raw:
+                break
+            print("   ⚠️  Groq returned empty content")
+        except Exception as e:
+            print(f"   ⚠️  Groq attempt {attempt + 1}/3 failed: {e}")
+            time.sleep(5 * (attempt + 1))
+
+    if not raw:
+        print("   ⚠️  Groq gave no usable response — using TF-IDF fallback")
+        return _tfidf_fallback(top_jobs)
 
     try:
-        response = client.chat.completions.create(
-            # model="llama-3.1-8b-instant",
-            model="openai/gpt-oss-120b", #"llama-3.3-70b-versatile",    # upgraded from llama-3.1-8b-instant
-            messages=[
-                {
-                    "role": "system",
-                    "content": "You are a precise job matching assistant. Return valid JSON only. Use only ASCII characters. No markdown."
-                },
-                {
-                    "role": "user",
-                    "content": prompt
-                }
-            ],
-            temperature=0.1,
-            max_tokens= 3500, #2000
-        )
+        data     = json.loads(raw)
+        rankings = data["rankings"] if isinstance(data, dict) else data
+    except (json.JSONDecodeError, KeyError) as e:
+        print(f"   ⚠️  Could not parse Groq JSON: {e}")
+        print(f"   ⚠️  Last 200 chars of response: {raw[-200:]}")
+        return _tfidf_fallback(top_jobs)
 
-        raw = response.choices[0].message.content.strip()
+    final_jobs = []
+    for item in rankings:
+        idx = item.get('job_number', 0) - 1
+        if 0 <= idx < len(top_jobs):
+            job = top_jobs[idx].copy()
+            job['rank']           = item.get('rank', len(final_jobs) + 1)
+            job['match_score']    = item.get('match_score', 0)
+            job['match_reason']   = item.get('match_reason', '')
+            job['matched_skills'] = item.get('matched_skills', [])
+            job['missing_skills'] = item.get('missing_skills', [])
+            final_jobs.append(job)
 
-        # Strip markdown fences if present
-        if "```" in raw:
-            raw = raw.split("```")[1]
-            if raw.startswith("json"):
-                raw = raw[4:]
-        raw = raw.strip()
+    if not final_jobs:
+        print("   ⚠️  Groq rankings matched no jobs — using TF-IDF fallback")
+        return _tfidf_fallback(top_jobs)
 
-        # Extra safety — remove any non-ASCII that snuck through
-        raw = raw.encode('ascii', 'ignore').decode('ascii')
-
-        rankings = json.loads(raw)
-
-        # Map rankings back to full job objects
-        final_jobs = []
-        for rank_item in rankings:
-            job_idx = rank_item.get('job_number', 1) - 1
-            if 0 <= job_idx < len(top_jobs):
-                job_copy = top_jobs[job_idx].copy()
-                job_copy['rank']           = rank_item.get('rank', len(final_jobs) + 1)
-                job_copy['match_score']    = rank_item.get('match_score', 0)
-                job_copy['match_reason']   = rank_item.get('match_reason', '')
-                job_copy['matched_skills'] = rank_item.get('matched_skills', [])
-                job_copy['missing_skills'] = rank_item.get('missing_skills', [])
-                final_jobs.append(job_copy)
-
-        print(f"   ✅ Groq re-ranking complete — top match score: {final_jobs[0]['match_score']}%")
-        return final_jobs[:20]
+    print(f"   ✅ Groq re-ranking complete — top match score: {final_jobs[0]['match_score']}%")
+    return final_jobs[:10]
 
     except json.JSONDecodeError as e:
         print(f"   ⚠️  Groq JSON parse error: {e}")
