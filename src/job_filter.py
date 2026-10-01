@@ -139,7 +139,7 @@ def is_job_excluded(job: dict) -> tuple[bool, str]:
         # Use word boundary to avoid false matches
         pattern = r'\b' + re.escape(avoid) + r'\b'
         if re.search(pattern, title):
-            return False, f"avoid title: {avoid}" # As i am not looking in USA at the moment
+            return True, f"avoid title: {avoid}" # As i am not looking in USA at the moment
 
     # Check if any safe phrase is present first
     for safe in SAFE_PHRASES:
