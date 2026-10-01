@@ -234,14 +234,14 @@ Return the best 10 postings, ranked best to worst."""
     print(f"   ✅ Groq re-ranking complete — top match score: {final_jobs[0]['match_score']}%")
     return final_jobs[:10]
 
-    except json.JSONDecodeError as e:
-        print(f"   ⚠️  Groq JSON parse error: {e}")
-        print(f"   ⚠️  Falling back to TF-IDF top 10")
-        return _tfidf_fallback(top_jobs)
+    # except json.JSONDecodeError as e:
+    #     print(f"   ⚠️  Groq JSON parse error: {e}")
+    #     print(f"   ⚠️  Falling back to TF-IDF top 10")
+    #     return _tfidf_fallback(top_jobs)
 
-    except Exception as e:
-        print(f"   ⚠️  Groq re-ranking failed: {e} — falling back to TF-IDF top 10")
-        return _tfidf_fallback(top_jobs)
+    # except Exception as e:
+    #     print(f"   ⚠️  Groq re-ranking failed: {e} — falling back to TF-IDF top 10")
+    #     return _tfidf_fallback(top_jobs)
 
 
 def _tfidf_fallback(top_jobs):
