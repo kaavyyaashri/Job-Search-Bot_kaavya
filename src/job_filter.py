@@ -15,9 +15,7 @@ RESUME_PROFILE_PATH = os.path.join(
 #     except Exception:
 #         return []
 
-AVOID_TITLES = ["senior", "sr", "lead", "principal", "staff", "manager", "director",
-                "head", "architect", "vp", "devops", "site reliability", "network engineer",
-                "security engineer", "civil", "mechanical", "transmission", "substation"]
+
 def load_avoid_titles() -> list[str]:
     """Load titles to avoid from resume_profile.json"""
     try:
