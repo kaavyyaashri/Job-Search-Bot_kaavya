@@ -7,6 +7,9 @@
     "Systems Engineer",
     "Research Engineer"
   ],
+  AVOID_TITLES = ["senior", "sr", "lead", "principal", "staff", "manager", "director",
+                "head", "architect", "vp", "devops", "site reliability", "network engineer",
+                "security engineer", "civil", "mechanical", "transmission", "substation"],
   "skills": [
     "Systems thinking",
     "Requirement analysis",
